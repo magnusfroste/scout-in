@@ -21,7 +21,7 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
     linkedinUrl: '',
     userPrompt: '',
     masterPrompt: '',
-    webhookUrl: 'https://agent.froste.eu/webhook-test/ab729e8a-0da7-49ef-902e-d0fafb1e0e56',
+    webhookUrl: 'https://agent.froste.eu/webhook/ab729e8a-0da7-49ef-902e-d0fafb1e0e56',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
