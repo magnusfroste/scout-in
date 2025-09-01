@@ -111,7 +111,7 @@ export const PromptEvaluator: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Simple Header */}
       <div className="border-b border-gray-200 bg-white">
         <div className="container mx-auto px-6 py-4">
@@ -122,7 +122,7 @@ export const PromptEvaluator: React.FC = () => {
       </div>
 
       {/* Main Content - Two Column Layout */}
-      <div className="container mx-auto px-6 py-6">
+      <div className="flex-1 container mx-auto px-6 py-6">
         <div className="grid grid-cols-2 gap-8 h-full">
           {/* Left Column - Prompts */}
           <div className="space-y-4">
@@ -131,9 +131,11 @@ export const PromptEvaluator: React.FC = () => {
           </div>
 
           {/* Right Column - Results */}
-          <div className="space-y-4">
+          <div className="space-y-4 h-full">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Results</h2>
-            <SimpleResultsDisplay result={latestResult} isEvaluating={isEvaluating} />
+            <div className="h-full">
+              <SimpleResultsDisplay result={latestResult} isEvaluating={isEvaluating} />
+            </div>
           </div>
         </div>
       </div>
