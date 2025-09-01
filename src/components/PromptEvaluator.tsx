@@ -12,7 +12,6 @@ export interface EvaluationRequest {
   linkedinUrl: string;
   userPrompt: string;
   masterPrompt: string;
-  webhookUrl: string;
 }
 
 export interface EvaluationResult {
@@ -45,7 +44,7 @@ export const PromptEvaluator: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const saveEvaluationToDatabase = async (request: EvaluationRequest, evaluationId: string) => {
+  const saveEvaluationToDatabase = async (request: EvaluationRequest): Promise<string | null> => {
     if (!user) return null;
 
     const { data, error } = await supabase
@@ -53,33 +52,29 @@ export const PromptEvaluator: React.FC = () => {
       .insert({
         user_id: user.id,
         company_name: request.companyName,
-        industry: null, // Not captured in current form
-        company_size: null, // Not captured in current form
-        target_audience: null, // Not captured in current form
         user_prompt: request.userPrompt,
         master_prompt: request.masterPrompt,
-        webhook_url: request.webhookUrl,
         status: 'pending'
       })
-      .select()
+      .select('id')
       .single();
 
     if (error) {
-      console.error('Error saving evaluation:', error);
+      console.error('Error saving evaluation to database:', error);
       return null;
     }
 
-    return data;
+    return data.id;
   };
 
-  const updateEvaluationResults = async (evaluationId: string, results: any, success: boolean, error?: string) => {
-    if (!user) return;
+  const updateEvaluationResults = async (evaluationId: string | null, results: any, status: string) => {
+    if (!user || !evaluationId) return;
 
     const { error: updateError } = await supabase
       .from('prompt_evaluations')
       .update({
         evaluation_results: results,
-        status: success ? 'completed' : 'failed',
+        status: status,
         updated_at: new Date().toISOString()
       })
       .eq('id', evaluationId);
@@ -89,19 +84,54 @@ export const PromptEvaluator: React.FC = () => {
     }
   };
 
+  const fetchWebhookUrl = async (): Promise<string | null> => {
+    try {
+      const { data, error } = await supabase
+        .from('webhook_testing')
+        .select('webhook_url')
+        .eq('is_active', true)
+        .single();
+
+      if (error) {
+        console.error('Error fetching webhook URL:', error);
+        return null;
+      }
+
+      return data?.webhook_url || null;
+    } catch (error) {
+      console.error('Error fetching webhook URL:', error);
+      return null;
+    }
+  };
+
   const handleEvaluation = async (request: EvaluationRequest) => {
+    if (isEvaluating) return;
+    
     setIsEvaluating(true);
     
-    const resultId = Date.now().toString();
-    let dbEvaluation = null;
-
-    // Save to database if user is authenticated
-    if (user) {
-      dbEvaluation = await saveEvaluationToDatabase(request, resultId);
-    }
-    
     try {
-      const response = await fetch(request.webhookUrl, {
+      // Fetch webhook URL from database
+      const webhookUrl = await fetchWebhookUrl();
+      
+      if (!webhookUrl) {
+        const errorResult: EvaluationResult = {
+          id: Date.now().toString(),
+          request,
+          response: null,
+          timestamp: new Date(),
+          success: false,
+          error: 'No webhook URL configured. Please contact administrator.'
+        };
+        
+        setResults(prev => [errorResult, ...prev]);
+        return;
+      }
+      
+      // Save initial evaluation data to database if user is authenticated
+      const evaluationId = await saveEvaluationToDatabase(request);
+      
+      // Send request to webhook
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,6 +144,7 @@ export const PromptEvaluator: React.FC = () => {
           user_prompt: request.userPrompt,
           master_prompt: request.masterPrompt,
           timestamp: new Date().toISOString(),
+          evaluationId: evaluationId // Include the evaluation ID for tracking
         }),
       });
 
@@ -145,12 +176,12 @@ export const PromptEvaluator: React.FC = () => {
       }
 
       // Update database with results
-      if (dbEvaluation) {
-        await updateEvaluationResults(dbEvaluation.id, responseData, response.ok, errorMessage);
+      if (evaluationId) {
+        await updateEvaluationResults(evaluationId, responseData, response.ok ? 'completed' : 'error');
       }
 
       const result: EvaluationResult = {
-        id: resultId,
+        id: Date.now().toString(),
         request,
         response: responseData,
         timestamp: new Date(),
@@ -169,12 +200,13 @@ export const PromptEvaluator: React.FC = () => {
       }
 
       // Update database with error
-      if (dbEvaluation) {
-        await updateEvaluationResults(dbEvaluation.id, null, false, errorMessage);
+      const evaluationId = await saveEvaluationToDatabase(request);
+      if (evaluationId) {
+        await updateEvaluationResults(evaluationId, null, 'error');
       }
 
       const result: EvaluationResult = {
-        id: resultId,
+        id: Date.now().toString(),
         request,
         response: null,
         timestamp: new Date(),

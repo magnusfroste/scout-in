@@ -20,29 +20,16 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
     linkedinUrl: '',
     userPrompt: '',
     masterPrompt: '',
-    webhookUrl: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate required fields
-    if (!formData.companyName || !formData.userPrompt || !formData.masterPrompt || !formData.webhookUrl) {
+    if (!formData.companyName || !formData.userPrompt || !formData.masterPrompt) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Validate webhook URL
-    try {
-      new URL(formData.webhookUrl);
-    } catch {
-      toast({
-        title: "Invalid URL",
-        description: "Please enter a valid webhook URL",
         variant: "destructive",
       });
       return;
@@ -147,26 +134,6 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
         </div>
       </Card>
 
-      {/* Webhook Configuration */}
-      <Card className="p-4 bg-background/50 border-primary/10">
-        <h3 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">
-          N8N Webhook Configuration
-        </h3>
-        <div className="space-y-2">
-          <Label htmlFor="webhookUrl">Webhook URL *</Label>
-          <Input
-            id="webhookUrl"
-            value={formData.webhookUrl}
-            onChange={(e) => handleInputChange('webhookUrl', e.target.value)}
-            placeholder="https://your-n8n-instance.com/webhook/..."
-            className="bg-background border-primary/20 focus:border-primary"
-            required
-          />
-          <p className="text-xs text-muted-foreground">
-            Your n8n workflow webhook endpoint for prompt evaluation
-          </p>
-        </div>
-      </Card>
 
       <Button 
         type="submit" 
