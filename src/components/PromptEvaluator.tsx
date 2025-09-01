@@ -131,9 +131,9 @@ export const PromptEvaluator: React.FC = () => {
           </div>
 
           {/* Right Column - Results */}
-          <div className="space-y-4 h-full">
+          <div className="space-y-4 flex flex-col min-h-0">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Results</h2>
-            <div className="h-full">
+            <div className="flex-1 min-h-0">
               <SimpleResultsDisplay result={latestResult} isEvaluating={isEvaluating} />
             </div>
           </div>

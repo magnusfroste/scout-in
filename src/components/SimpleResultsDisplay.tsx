@@ -61,7 +61,7 @@ export const SimpleResultsDisplay: React.FC<SimpleResultsDisplayProps> = ({ resu
   }
 
   return (
-    <div className="border border-gray-200 rounded-lg bg-white">
+    <div className="border border-gray-200 rounded-lg bg-white h-full flex flex-col">
       {/* Status Header */}
       <div className={`px-4 py-3 border-b border-gray-200 ${
         result.success ? 'bg-green-50' : 'bg-red-50'
@@ -85,9 +85,9 @@ export const SimpleResultsDisplay: React.FC<SimpleResultsDisplayProps> = ({ resu
       </div>
 
       {/* Response Content */}
-      <div className="p-4">
+      <div className="p-4 flex-1 flex flex-col min-h-0">
         {result.success && result.response ? (
-          <div className="space-y-3">
+          <div className="space-y-3 flex flex-col h-full min-h-0">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-medium text-gray-900">AI Response</h4>
               <Button
@@ -100,7 +100,7 @@ export const SimpleResultsDisplay: React.FC<SimpleResultsDisplayProps> = ({ resu
                 Copy
               </Button>
             </div>
-            <div className="bg-white rounded border border-gray-200 p-4 max-h-96 overflow-y-auto">
+            <div className="bg-white rounded border border-gray-200 p-4 flex-1 overflow-y-auto">
               <div className="prose prose-sm max-w-none text-black">
                 <ReactMarkdown
                   components={{
