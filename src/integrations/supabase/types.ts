@@ -326,6 +326,33 @@ export type Database = {
         }
         Relationships: []
       }
+      prompts: {
+        Row: {
+          created_at: string
+          id: string
+          master_prompt: string
+          name: string
+          updated_at: string
+          user_prompt: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          master_prompt: string
+          name: string
+          updated_at?: string
+          user_prompt: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          master_prompt?: string
+          name?: string
+          updated_at?: string
+          user_prompt?: string
+        }
+        Relationships: []
+      }
       user_email_settings: {
         Row: {
           app_password: string | null
