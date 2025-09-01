@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +12,8 @@ import {
   ChevronUp,
   Copy,
   Download,
-  Loader2
+  Loader2,
+  FileText
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -162,6 +164,41 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, isEvalu
               <span className="text-sm font-medium">{result.request.companyName}</span>
             </div>
 
+            {/* Response preview for successful results */}
+            {result.success && result.response && (
+              <div className="mb-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-primary">AI Analysis Report</span>
+                </div>
+                <div className="bg-background/50 p-3 rounded border border-border/50 max-h-32 overflow-y-auto">
+                  <pre className="text-xs whitespace-pre-wrap font-mono">
+                    {formatResponse(result.response).substring(0, 300)}
+                    {formatResponse(result.response).length > 300 && '...'}
+                  </pre>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => toggleExpanded(result.id)}
+                    className="text-xs"
+                  >
+                    {expandedResults.has(result.id) ? 'Hide' : 'View'} Full Report
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(formatResponse(result.response))}
+                    className="text-xs"
+                  >
+                    <Copy className="w-3 h-3 mr-1" />
+                    Copy Report
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {/* Error message if failed */}
             {!result.success && result.error && (
               <div className="text-sm text-red-400 bg-red-500/10 p-2 rounded mb-3">
@@ -172,6 +209,31 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, isEvalu
             {/* Expanded content */}
             {expandedResults.has(result.id) && (
               <div className="space-y-4 mt-4 pt-4 border-t border-border/50">
+                {/* Full Response - now more prominent */}
+                {result.response && (
+                  <div>
+                    <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-primary" />
+                      Complete AI Analysis Report
+                    </h4>
+                    <div className="relative">
+                      <div className="bg-background/50 p-4 rounded border border-border/50 max-h-96 overflow-y-auto">
+                        <pre className="text-xs whitespace-pre-wrap font-mono leading-relaxed">
+                          {formatResponse(result.response)}
+                        </pre>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="absolute top-2 right-2 h-6 w-6 p-0 opacity-50 hover:opacity-100"
+                        onClick={() => copyToClipboard(formatResponse(result.response))}
+                      >
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 {/* Request details */}
                 <div>
                   <h4 className="text-sm font-medium mb-2">Request Parameters</h4>
@@ -221,26 +283,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, isEvalu
                     </Button>
                   </div>
                 </div>
-
-                {/* Response */}
-                {result.response && (
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Response</h4>
-                    <div className="relative">
-                      <pre className="text-xs bg-background/50 p-3 rounded border border-border/50 overflow-x-auto max-h-48 overflow-y-auto">
-                        {formatResponse(result.response)}
-                      </pre>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="absolute top-2 right-2 h-6 w-6 p-0 opacity-50 hover:opacity-100"
-                        onClick={() => copyToClipboard(formatResponse(result.response))}
-                      >
-                        <Copy className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </Card>
