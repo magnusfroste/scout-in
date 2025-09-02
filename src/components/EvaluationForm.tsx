@@ -255,12 +255,6 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
         </div>
       </div>
 
- {/* Textt */}
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="userPrompt" className="text-sm font-medium text-gray-700">User Prompt *</Label>
-          Parameters 
-        </div>
       
       {/* Large Prompt Textareas */}
       <div className="space-y-4">
