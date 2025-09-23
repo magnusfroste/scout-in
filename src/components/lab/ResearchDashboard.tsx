@@ -16,7 +16,8 @@ import {
   Star,
   Download,
   Filter,
-  MoreHorizontal
+  MoreHorizontal,
+  RefreshCw
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -124,6 +125,70 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const resendWebhook = async (researchItem: ResearchItem) => {
+    try {
+      // Get the company and user profiles
+      const [companyProfile, userProfile] = await Promise.all([
+        supabase.from('lab_company_profiles').select('*').eq('user_id', DEMO_USER_ID).single(),
+        supabase.from('lab_user_profiles').select('*').eq('user_id', DEMO_USER_ID).single()
+      ]);
+
+      if (companyProfile.error || userProfile.error) {
+        throw new Error('Error fetching profiles for resend');
+      }
+
+      // Get webhook URL
+      const { data: webhookData } = await supabase
+        .from('webhook_testing')
+        .select('webhook_url')
+        .eq('is_active', true)
+        .single();
+
+      const webhookUrl = webhookData?.webhook_url || 'https://example.com/webhook';
+
+      // Prepare the webhook payload
+      const webhookPayload = {
+        prospect_data: {
+          company_name: researchItem.prospect_company_name,
+          website_url: researchItem.prospect_website_url,
+          linkedin_url: researchItem.prospect_linkedin_url,
+          research_type: researchItem.research_type,
+          notes: researchItem.notes || ''
+        },
+        company_profile: companyProfile.data,
+        user_profile: userProfile.data,
+        timestamp: new Date().toISOString(),
+        research_id: researchItem.id
+      };
+
+      // Send POST request
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(webhookPayload)
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Webhook Resent",
+          description: `Successfully resent research data for ${researchItem.prospect_company_name}`,
+          duration: 3000
+        });
+      } else {
+        throw new Error(`Webhook failed: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Resend error:', error);
+      toast({
+        title: "Resend Failed",
+        description: error instanceof Error ? error.message : "Failed to resend webhook",
+        variant: "destructive"
+      });
     }
   };
 
@@ -354,8 +419,23 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
                     <div>
                       <h3 className="text-lg font-semibold">{item.prospect_company_name}</h3>
                       <p className="text-muted-foreground">{item.prospect_website_url}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Created {new Date(item.created_at).toLocaleDateString()}
+                      </p>
                     </div>
-                    {getStatusBadge(item.status)}
+                    <div className="flex items-center gap-2">
+                      {getStatusBadge(item.status)}
+                      {/* Temporary resend button for development */}
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => resendWebhook(item)}
+                        className="flex items-center gap-1"
+                      >
+                        <RefreshCw className="h-3 w-3" />
+                        Resend
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
