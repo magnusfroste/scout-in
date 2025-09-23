@@ -59,60 +59,27 @@ export type Database = {
         }
         Relationships: []
       }
-      assignments: {
+      app_integrations: {
         Row: {
-          budget: string | null
-          company: string | null
-          created_at: string
-          deadline: string | null
-          description: string | null
-          detail_url: string | null
-          duration: string | null
-          external_id: string | null
+          config: Json
+          created_at: string | null
           id: string
-          location: string | null
-          scraped_at: string
-          skills: string[] | null
-          title: string
-          updated_at: string
-          urgency: string | null
-          user_id: string
+          integration_name: string
+          updated_at: string | null
         }
         Insert: {
-          budget?: string | null
-          company?: string | null
-          created_at?: string
-          deadline?: string | null
-          description?: string | null
-          detail_url?: string | null
-          duration?: string | null
-          external_id?: string | null
+          config: Json
+          created_at?: string | null
           id?: string
-          location?: string | null
-          scraped_at?: string
-          skills?: string[] | null
-          title: string
-          updated_at?: string
-          urgency?: string | null
-          user_id: string
+          integration_name: string
+          updated_at?: string | null
         }
         Update: {
-          budget?: string | null
-          company?: string | null
-          created_at?: string
-          deadline?: string | null
-          description?: string | null
-          detail_url?: string | null
-          duration?: string | null
-          external_id?: string | null
+          config?: Json
+          created_at?: string | null
           id?: string
-          location?: string | null
-          scraped_at?: string
-          skills?: string[] | null
-          title?: string
-          updated_at?: string
-          urgency?: string | null
-          user_id?: string
+          integration_name?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -242,6 +209,366 @@ export type Database = {
         }
         Relationships: []
       }
+      lab_company_profiles: {
+        Row: {
+          business_registration: string | null
+          communication_style: string
+          company_name: string
+          company_size: string
+          created_at: string
+          credentials: string[]
+          delivery_model: string[]
+          geographic_markets: string[]
+          id: string
+          ideal_client_size: string[]
+          industry: string
+          is_complete: boolean | null
+          known_clients: boolean | null
+          known_clients_list: string | null
+          linkedin_url: string | null
+          main_offerings: string[]
+          mission: string
+          offering_type: string[]
+          organizational_personality: string[]
+          pricing_positioning: string
+          project_scope: string
+          success_story: string | null
+          target_industries: string[]
+          typical_results: string[]
+          unique_differentiators: string[]
+          updated_at: string
+          user_id: string
+          values: string[]
+          vision: string | null
+          website_url: string
+          years_active: string
+        }
+        Insert: {
+          business_registration?: string | null
+          communication_style: string
+          company_name: string
+          company_size: string
+          created_at?: string
+          credentials?: string[]
+          delivery_model?: string[]
+          geographic_markets?: string[]
+          id?: string
+          ideal_client_size?: string[]
+          industry: string
+          is_complete?: boolean | null
+          known_clients?: boolean | null
+          known_clients_list?: string | null
+          linkedin_url?: string | null
+          main_offerings?: string[]
+          mission: string
+          offering_type?: string[]
+          organizational_personality?: string[]
+          pricing_positioning: string
+          project_scope: string
+          success_story?: string | null
+          target_industries?: string[]
+          typical_results?: string[]
+          unique_differentiators?: string[]
+          updated_at?: string
+          user_id: string
+          values?: string[]
+          vision?: string | null
+          website_url: string
+          years_active: string
+        }
+        Update: {
+          business_registration?: string | null
+          communication_style?: string
+          company_name?: string
+          company_size?: string
+          created_at?: string
+          credentials?: string[]
+          delivery_model?: string[]
+          geographic_markets?: string[]
+          id?: string
+          ideal_client_size?: string[]
+          industry?: string
+          is_complete?: boolean | null
+          known_clients?: boolean | null
+          known_clients_list?: string | null
+          linkedin_url?: string | null
+          main_offerings?: string[]
+          mission?: string
+          offering_type?: string[]
+          organizational_personality?: string[]
+          pricing_positioning?: string
+          project_scope?: string
+          success_story?: string | null
+          target_industries?: string[]
+          typical_results?: string[]
+          unique_differentiators?: string[]
+          updated_at?: string
+          user_id?: string
+          values?: string[]
+          vision?: string | null
+          website_url?: string
+          years_active?: string
+        }
+        Relationships: []
+      }
+      lab_prospect_research: {
+        Row: {
+          company_profile_id: string
+          completed_at: string | null
+          contact_strategy: Json | null
+          created_at: string
+          decision_makers: Json | null
+          error_message: string | null
+          exported_at: string | null
+          fit_score: number | null
+          id: string
+          is_starred: boolean | null
+          notes: string | null
+          prospect_company_name: string
+          prospect_linkedin_url: string | null
+          prospect_website_url: string
+          research_results: Json | null
+          research_type: string
+          started_at: string | null
+          status: string
+          tags: string[] | null
+          updated_at: string
+          user_id: string
+          user_profile_id: string
+          value_proposition: Json | null
+          webhook_url: string
+        }
+        Insert: {
+          company_profile_id: string
+          completed_at?: string | null
+          contact_strategy?: Json | null
+          created_at?: string
+          decision_makers?: Json | null
+          error_message?: string | null
+          exported_at?: string | null
+          fit_score?: number | null
+          id?: string
+          is_starred?: boolean | null
+          notes?: string | null
+          prospect_company_name: string
+          prospect_linkedin_url?: string | null
+          prospect_website_url: string
+          research_results?: Json | null
+          research_type?: string
+          started_at?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+          user_id: string
+          user_profile_id: string
+          value_proposition?: Json | null
+          webhook_url: string
+        }
+        Update: {
+          company_profile_id?: string
+          completed_at?: string | null
+          contact_strategy?: Json | null
+          created_at?: string
+          decision_makers?: Json | null
+          error_message?: string | null
+          exported_at?: string | null
+          fit_score?: number | null
+          id?: string
+          is_starred?: boolean | null
+          notes?: string | null
+          prospect_company_name?: string
+          prospect_linkedin_url?: string | null
+          prospect_website_url?: string
+          research_results?: Json | null
+          research_type?: string
+          started_at?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+          user_id?: string
+          user_profile_id?: string
+          value_proposition?: Json | null
+          webhook_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_prospect_research_company_profile_id_fkey"
+            columns: ["company_profile_id"]
+            isOneToOne: false
+            referencedRelation: "lab_company_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_prospect_research_user_profile_id_fkey"
+            columns: ["user_profile_id"]
+            isOneToOne: false
+            referencedRelation: "lab_user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lab_research_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          master_prompt: string
+          name: string
+          research_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          master_prompt: string
+          name: string
+          research_type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          master_prompt?: string
+          name?: string
+          research_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lab_user_profiles: {
+        Row: {
+          birthplace: string | null
+          communication_style: string
+          created_at: string
+          credibility_preference: string[]
+          current_location: string | null
+          date_of_birth: string | null
+          expertise_positioning: string
+          followup_timing: string
+          full_name: string
+          id: string
+          introduction_style: string
+          is_complete: boolean | null
+          linkedin_profile: string | null
+          meeting_duration: string
+          meeting_format: string[]
+          nonresponse_handling: string
+          objection_handling: string[]
+          outreach_experience: string
+          pain_points_focus: string[]
+          preferred_contact_channel: string[]
+          prospects_per_week: string
+          role_in_organization: string
+          success_metrics: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          birthplace?: string | null
+          communication_style: string
+          created_at?: string
+          credibility_preference?: string[]
+          current_location?: string | null
+          date_of_birth?: string | null
+          expertise_positioning: string
+          followup_timing: string
+          full_name: string
+          id?: string
+          introduction_style: string
+          is_complete?: boolean | null
+          linkedin_profile?: string | null
+          meeting_duration: string
+          meeting_format?: string[]
+          nonresponse_handling: string
+          objection_handling?: string[]
+          outreach_experience: string
+          pain_points_focus?: string[]
+          preferred_contact_channel?: string[]
+          prospects_per_week: string
+          role_in_organization: string
+          success_metrics?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          birthplace?: string | null
+          communication_style?: string
+          created_at?: string
+          credibility_preference?: string[]
+          current_location?: string | null
+          date_of_birth?: string | null
+          expertise_positioning?: string
+          followup_timing?: string
+          full_name?: string
+          id?: string
+          introduction_style?: string
+          is_complete?: boolean | null
+          linkedin_profile?: string | null
+          meeting_duration?: string
+          meeting_format?: string[]
+          nonresponse_handling?: string
+          objection_handling?: string[]
+          outreach_experience?: string
+          pain_points_focus?: string[]
+          preferred_contact_channel?: string[]
+          prospects_per_week?: string
+          role_in_organization?: string
+          success_metrics?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      oauth_connections: {
+        Row: {
+          auth_config_id: string | null
+          connected_at: string | null
+          connection_type: string
+          created_at: string
+          email_address: string
+          id: string
+          mcp_server_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auth_config_id?: string | null
+          connected_at?: string | null
+          connection_type?: string
+          created_at?: string
+          email_address: string
+          id?: string
+          mcp_server_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auth_config_id?: string | null
+          connected_at?: string | null
+          connection_type?: string
+          created_at?: string
+          email_address?: string
+          id?: string
+          mcp_server_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -356,6 +683,7 @@ export type Database = {
       user_email_settings: {
         Row: {
           app_password: string | null
+          connection_type: string | null
           created_at: string | null
           email_address: string
           email_provider: string
@@ -372,6 +700,7 @@ export type Database = {
         }
         Insert: {
           app_password?: string | null
+          connection_type?: string | null
           created_at?: string | null
           email_address: string
           email_provider: string
@@ -388,6 +717,7 @@ export type Database = {
         }
         Update: {
           app_password?: string | null
+          connection_type?: string | null
           created_at?: string | null
           email_address?: string
           email_provider?: string
@@ -434,39 +764,6 @@ export type Database = {
         }
         Relationships: []
       }
-      webhook_settings: {
-        Row: {
-          created_at: string | null
-          default_signup_credits: number | null
-          id: string
-          mybusiness_url: string | null
-          questions_url: string | null
-          updated_at: string | null
-          url: string
-          value_proposition_url: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          default_signup_credits?: number | null
-          id?: string
-          mybusiness_url?: string | null
-          questions_url?: string | null
-          updated_at?: string | null
-          url?: string
-          value_proposition_url?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          default_signup_credits?: number | null
-          id?: string
-          mybusiness_url?: string | null
-          questions_url?: string | null
-          updated_at?: string | null
-          url?: string
-          value_proposition_url?: string | null
-        }
-        Relationships: []
-      }
       webhook_testing: {
         Row: {
           created_at: string
@@ -504,6 +801,7 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: {
           app_password: string | null
+          connection_type: string | null
           created_at: string | null
           email_address: string
           email_provider: string

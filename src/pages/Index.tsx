@@ -1,7 +1,7 @@
-import { PromptEvaluator } from '@/components/PromptEvaluator';
+import { LabApp } from '@/components/lab/LabApp';
 
 const Index = () => {
-  return <PromptEvaluator />;
+  return <LabApp />;
 };
 
 export default Index;
