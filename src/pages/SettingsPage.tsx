@@ -1,7 +1,12 @@
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useState } from "react";
 
 export default function SettingsPage() {
+  const [exportFormat, setExportFormat] = useState("pdf");
+
   return (
     <div className="space-y-6">
       <div>
@@ -27,6 +32,38 @@ export default function SettingsPage() {
               </p>
             </div>
             <ThemeToggle />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Export Settings</CardTitle>
+          <CardDescription>
+            Configure default export format for research data.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">Default Export Format</Label>
+            <RadioGroup 
+              value={exportFormat} 
+              onValueChange={setExportFormat}
+              className="flex flex-col space-y-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="pdf" id="pdf" />
+                <Label htmlFor="pdf" className="text-sm">
+                  PDF - Professional formatted document
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="json" id="json" />
+                <Label htmlFor="json" className="text-sm">
+                  JSON - Raw data for integrations
+                </Label>
+              </div>
+            </RadioGroup>
           </div>
         </CardContent>
       </Card>
