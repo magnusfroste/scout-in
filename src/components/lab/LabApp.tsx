@@ -5,6 +5,7 @@ import { ResearchInitiator } from './ResearchInitiator';
 import { UserProfileWizard } from './UserProfileWizard';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { enhanceWebhookPayload } from '@/lib/webhookPayloadUtils';
 
 type ViewMode = 'dashboard' | 'company-profile' | 'user-profile' | 'research';
 
@@ -155,20 +156,13 @@ export const LabApp: React.FC = () => {
 
       const webhookUrl = webhookData?.webhook_url || 'https://example.com/webhook';
 
-      // Prepare the complete webhook payload for n8n development
-      const webhookPayload = {
-        prospect_data: {
-          company_name: data.company_name,
-          website_url: data.website_url,
-          linkedin_url: data.linkedin_url,
-          research_type: data.research_type || 'standard',
-          notes: data.notes || ''
-        },
-        company_profile: companyProfile.data,
-        user_profile: userProfile.data,
-        timestamp: new Date().toISOString(),
-        research_id: null // Will be filled after database insert
-      };
+      // Prepare the enhanced webhook payload for n8n development
+      const webhookPayload = enhanceWebhookPayload(
+        data,
+        companyProfile.data,
+        userProfile.data,
+        null // Will be filled after database insert
+      );
 
       // Create the research record with FIXED field mapping
       const { data: researchRecord, error: insertError } = await supabase

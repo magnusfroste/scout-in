@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useState } from 'react';
+import { enhanceWebhookPayload } from '@/lib/webhookPayloadUtils';
 
 const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
 
@@ -58,20 +59,13 @@ const ResearchPage = () => {
 
       if (insertError) throw insertError;
 
-      // Prepare webhook payload
-      const webhookPayload = {
-        prospect_data: {
-          company_name: data.company_name,
-          website_url: data.website_url,
-          linkedin_url: data.linkedin_url,
-          research_type: data.research_type || 'standard',
-          notes: data.notes || ''
-        },
-        company_profile: companyProfile.data,
-        user_profile: userProfile.data,
-        timestamp: new Date().toISOString(),
-        research_id: researchRecord.id
-      };
+      // Prepare enhanced webhook payload
+      const webhookPayload = enhanceWebhookPayload(
+        data,
+        companyProfile.data,
+        userProfile.data,
+        researchRecord.id
+      );
 
       // Send POST request to webhook endpoint
       try {
