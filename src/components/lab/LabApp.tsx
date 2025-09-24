@@ -6,7 +6,6 @@ import { UserProfileWizard } from './UserProfileWizard';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { enhanceWebhookPayload } from '@/lib/webhookPayloadUtils';
-import { generateN8nPromptConfig, formatN8nWebhookPayload } from '@/lib/n8nPromptManager';
 
 type ViewMode = 'dashboard' | 'company-profile' | 'user-profile' | 'research';
 
@@ -165,11 +164,8 @@ export const LabApp: React.FC = () => {
         null // Will be filled after database insert
       );
 
-      // Generate intelligent N8N prompt configuration
-      const promptConfig = generateN8nPromptConfig(enhancedPayload);
-      
-      // Format complete webhook payload with prompts and intelligence
-      const webhookPayload = formatN8nWebhookPayload(promptConfig);
+      // Enhanced payload ready for N8N (system prompt managed in N8N)
+      const webhookPayload = enhancedPayload;
 
       // Create the research record with FIXED field mapping
       const { data: researchRecord, error: insertError } = await supabase
@@ -193,10 +189,9 @@ export const LabApp: React.FC = () => {
 
       // Update payload with research ID
       enhancedPayload.research_id = researchRecord.id;
-      promptConfig.enhancedPayload.research_id = researchRecord.id;
       
-      // Regenerate final webhook payload with research ID
-      const finalWebhookPayload = formatN8nWebhookPayload(promptConfig);
+      // Final webhook payload with research ID
+      const finalWebhookPayload = enhancedPayload;
 
       // Send POST request to webhook endpoint
       try {

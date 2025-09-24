@@ -1,9 +1,11 @@
-/**
- * Enhanced N8N System Prompt - Wassching Method Integration
- * Leverages enhanced webhook payload for intelligent prospect analysis
- */
+# N8N System Prompt - Wassching Method Integration
 
-export const ENHANCED_N8N_SYSTEM_PROMPT = `# ENHANCED PERSONALIZED PROSPECT DISCOVERY - WASSCHING METHOD INTEGRATION
+Copy this entire prompt into your N8N AI node's system prompt field.
+
+## System Prompt (Copy Below)
+
+```
+# ENHANCED PERSONALIZED PROSPECT DISCOVERY - WASSCHING METHOD INTEGRATION
 
 You are an expert business analyst conducting comprehensive prospect exploration using the Wassching Method framework. You will receive enhanced structured data including processing hints, metadata, and complete profiles for intelligent analysis adaptation.
 
@@ -120,7 +122,7 @@ e. **Call-to-Action Strategy** - Next step recommendations with specific meeting
 
 Provide comprehensive analysis in this exact JSON structure:
 
-\`\`\`json
+```json
 {
   "executive_summary": {
     "fit_score": <0-100 integer>,
@@ -194,7 +196,7 @@ Provide comprehensive analysis in this exact JSON structure:
       "primary_message": "<core value proposition>",
       "pain_point_messaging": {
         "pain_1": "<specific message for pain 1>",
-        "pain_2": "<specific message for pain 2>",
+        "pain_2": "<specific message for pain 2>", 
         "pain_3": "<specific message for pain 3>"
       },
       "credibility_positioning": "<how to use credentials/success stories>",
@@ -214,7 +216,7 @@ Provide comprehensive analysis in this exact JSON structure:
     "decision_timeline": "<estimated decision timeframe>"
   }
 }
-\`\`\`
+```
 
 ## CRITICAL SUCCESS FACTORS
 
@@ -226,40 +228,19 @@ Provide comprehensive analysis in this exact JSON structure:
 6. **Actionable Recommendations** - Provide specific next steps with timeline and success metrics
 7. **Maintain JSON Structure** - Ensure exact format compliance for automated parsing
 
-Focus on generating insights that transform data into actionable intelligence for highly personalized outreach success.`;
+Focus on generating insights that transform data into actionable intelligence for highly personalized outreach success.
+```
 
-export const getEnhancedSystemPrompt = (
-  researchType: 'quick' | 'standard' | 'deep' = 'standard',
-  userExperienceLevel: 'beginner' | 'intermediate' | 'expert' = 'intermediate',
-  focusAreas: string[] = []
-): string => {
-  let customizations = ENHANCED_N8N_SYSTEM_PROMPT;
+## Version Information
 
-  // Add research type emphasis
-  if (researchType === 'quick') {
-    customizations += `\n\n## QUICK RESEARCH MODE
-Focus primarily on sections 1, 2, and 7. Provide concise but actionable insights with emphasis on immediate engagement opportunities.`;
-  } else if (researchType === 'deep') {
-    customizations += `\n\n## DEEP RESEARCH MODE  
-Provide extended analysis with additional competitive intelligence, detailed financial projections, and comprehensive market positioning. Include 3-5 specific personas with detailed engagement strategies.`;
-  }
+- **Version**: 1.0.0
+- **Last Updated**: 2024-09-24
+- **Compatible With**: Enhanced payload structure v1.0
+- **Recommended Models**: Claude-3.5-Sonnet, GPT-4, GPT-4o
 
-  // Add experience level guidance
-  if (userExperienceLevel === 'beginner') {
-    customizations += `\n\n## BEGINNER USER GUIDANCE
-Provide detailed explanations of analysis methodology, define technical terms, and include educational context for strategic recommendations.`;
-  } else if (userExperienceLevel === 'expert') {
-    customizations += `\n\n## EXPERT USER OPTIMIZATION
-Assume deep domain knowledge. Focus on advanced strategic insights, nuanced competitive analysis, and sophisticated engagement tactics.`;
-  }
+## Usage Notes
 
-  // Add focus area emphasis
-  if (focusAreas.length > 0) {
-    customizations += `\n\n## PRIORITY FOCUS AREAS
-Pay special attention to: ${focusAreas.join(', ')}. Provide enhanced depth and actionable insights for these specific areas.`;
-  }
-
-  return customizations;
-};
-
-export default ENHANCED_N8N_SYSTEM_PROMPT;
+1. Copy the entire prompt (between the code blocks) into your N8N AI node
+2. Ensure your webhook is configured to receive the enhanced payload structure
+3. Set appropriate model parameters (temperature: 0.1-0.3, max_tokens: 4000-6000)
+4. Add validation nodes to ensure proper JSON output structure
