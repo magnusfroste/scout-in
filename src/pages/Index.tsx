@@ -1,7 +1,16 @@
-import { LabApp } from '@/components/lab/LabApp';
+import { ResearchDashboard } from '@/components/lab/ResearchDashboard';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
-  return <LabApp />;
+  const navigate = useNavigate();
+  
+  return (
+    <ResearchDashboard
+      onStartResearch={() => navigate('/research')}
+      onSetupCompanyProfile={() => navigate('/company-profile')}
+      onSetupUserProfile={() => navigate('/user-profile')}
+    />
+  );
 };
 
 export default Index;
