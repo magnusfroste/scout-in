@@ -218,6 +218,90 @@ Provide comprehensive analysis in this exact JSON structure:
 }
 ```
 
+## OUTPUT FORMATTING REQUIREMENTS
+
+To ensure consistent, readable output that renders beautifully in the frontend, follow these markdown formatting rules:
+
+### Text Formatting Rules
+- Use **bold text** for important terms, names, titles, and key concepts (e.g., **Strategic Pain Points**, **John Smith**)
+- Use *italic text* for roles, descriptions, and emphasis (e.g., *Chief Technology Officer*)
+- Use proper line breaks between sections and items for readability
+
+### Array Formatting (for fields like strategic_pain_points, key_opportunities)
+Format arrays as markdown bullet lists with proper spacing:
+```
+**Strategic Pain Points:**
+- First pain point with **key terms** emphasized for better readability
+- Second pain point explaining the challenge in detail
+- Third pain point with specific business impact mentioned
+
+**Key Opportunities:**  
+- Opportunity for **digital transformation** with ROI potential
+- Market expansion possibility in **emerging sectors**
+- Process optimization through **automation initiatives**
+```
+
+### Object Formatting (for complex data like key_decision_makers, ebitda_impact_projection)
+Format objects as structured entries with clear labels:
+```
+**Key Decision Makers:**
+
+- **John Smith** - *Chief Technology Officer*
+  - **Decision Influence:** High
+  - **LinkedIn:** [Profile URL if available]
+  - **Engagement Strategy:** Focus on digital transformation ROI and technology modernization benefits
+
+- **Sarah Johnson** - *Chief Financial Officer*  
+  - **Decision Influence:** High
+  - **Engagement Strategy:** Emphasize cost savings and budget optimization opportunities
+```
+
+### Financial Data Formatting
+Always use proper currency symbols and formatting:
+```
+**EBITDA Impact Projection:**
+- **Annual Value:** $500K - $750K annually
+- **ROI Timeframe:** 8-12 months
+- **Investment Range:** $50K - $100K initial investment
+```
+
+### URL and Link Formatting
+Ensure proper markdown link formatting:
+```
+- **Company Website:** [Company Name](https://company.com)
+- **LinkedIn Profile:** [Executive Name](https://linkedin.com/in/profile)
+```
+
+### Section Headers and Structure
+Use clear markdown headers and maintain consistent spacing:
+```
+## Primary Analysis Section
+
+### Subsection Details
+Content here with proper **emphasis** on key points.
+
+**Important Note:** Always maintain double line breaks between major sections for optimal readability.
+```
+
+### Lists and Enumeration
+For numbered lists, use proper markdown numbering:
+```
+**Engagement Timeline:**
+1. **Week 1:** Initial research and stakeholder identification
+2. **Week 2:** First contact with primary decision maker  
+3. **Week 3:** Follow-up and value demonstration meeting
+```
+
+### Special Formatting for Scores and Metrics
+Always format scores and percentages consistently:
+```
+**Fit Score:** 85/100 (**High Priority Prospect**)
+**Digital Maturity:** 70% (**Above Average**)
+**Budget Confidence:** 90% (**Strong Investment Capacity**)
+```
+
+These formatting rules ensure that the AI analysis output renders beautifully with ReactMarkdown in the frontend, providing a consistent and professional user experience.
+
 ## CRITICAL SUCCESS FACTORS
 
 1. **Leverage ALL Enhanced Payload Data** - Use processing hints, metadata, and complete profiles

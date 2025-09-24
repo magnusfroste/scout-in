@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -128,6 +129,21 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
     return JSON.stringify(content, null, 2);
   };
 
+  const renderMarkdownContent = (content: string) => (
+    <ReactMarkdown 
+      components={{
+        p: ({ children }) => <p className="text-sm text-muted-foreground leading-relaxed mb-2">{children}</p>,
+        strong: ({ children }) => <strong className="text-foreground font-semibold">{children}</strong>,
+        ul: ({ children }) => <ul className="text-sm text-muted-foreground space-y-1 ml-4">{children}</ul>,
+        li: ({ children }) => <li className="list-disc">{children}</li>,
+        h3: ({ children }) => <h3 className="text-foreground font-semibold text-base mb-2">{children}</h3>,
+        h4: ({ children }) => <h4 className="text-foreground font-medium text-sm mb-1">{children}</h4>,
+      }}
+    >
+      {content}  
+    </ReactMarkdown>
+  );
+
   const renderAccordion = (data: any, prefix: string) => {
     const isExpanded = accordionExpansion === 'expanded';
     const defaultValues = isExpanded ? Object.keys(data).map((_, index) => `${prefix}-${index}`) : undefined;
@@ -142,7 +158,9 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="flex items-start justify-between gap-4">
-                  <p className="text-sm leading-relaxed flex-1">{formatSectionContent(value)}</p>
+                  <div className="flex-1">
+                    {renderMarkdownContent(formatSectionContent(value))}
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -168,7 +186,9 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex items-start justify-between gap-4">
-                <p className="text-sm leading-relaxed flex-1">{formatSectionContent(value)}</p>
+                <div className="flex-1">
+                  {renderMarkdownContent(formatSectionContent(value))}
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -206,9 +226,9 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {formatSectionContent(value)}
-              </p>
+              <div className="text-sm leading-relaxed">
+                {renderMarkdownContent(formatSectionContent(value))}
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -252,9 +272,9 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
           {results.executive_summary && (
             <div>
               <h3 className="font-semibold mb-2">Executive Summary</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {typeof results.executive_summary === 'string' ? results.executive_summary : results.executive_summary.overall_assessment}
-              </p>
+              <div className="text-sm leading-relaxed">
+                {renderMarkdownContent(typeof results.executive_summary === 'string' ? results.executive_summary : results.executive_summary.overall_assessment)}
+              </div>
             </div>
           )}
         </CardContent>
