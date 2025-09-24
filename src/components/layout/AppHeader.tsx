@@ -2,7 +2,6 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import explorerLogo from "@/assets/explorer-1100-branding.png";
 
 export function AppHeader() {
   return (
@@ -11,11 +10,6 @@ export function AppHeader() {
         <div className="flex items-center gap-4">
           <SidebarTrigger className="text-sidebar-foreground hover:text-sidebar-primary transition-colors" />
           <div className="flex items-center gap-3">
-            <img 
-              src={explorerLogo} 
-              alt="Explorer 1100" 
-              className="h-8 w-auto"
-            />
             <div className="hidden sm:block">
               <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
                 Explorer 1100

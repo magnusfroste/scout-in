@@ -75,26 +75,26 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Explorer 1100 Dark Theme */
-    --background: 225 100% 15%;
+    /* Explorer 1100 Dark Theme - LABS inspired */
+    --background: 215 28% 8%;
     --foreground: 210 20% 98%;
     
-    --card: 225 84% 12%;
+    --card: 215 28% 12%;
     --card-foreground: 210 20% 98%;
     
-    --popover: 225 84% 12%;
+    --popover: 215 28% 12%;
     --popover-foreground: 210 20% 98%;
     
     --primary: 220 90% 56%;
-    --primary-foreground: 225 100% 15%;
+    --primary-foreground: 215 28% 8%;
     
-    --secondary: 225 71% 20%;
+    --secondary: 215 28% 15%;
     --secondary-foreground: 210 20% 98%;
     
-    --muted: 225 71% 20%;
+    --muted: 215 28% 15%;
     --muted-foreground: 215 20.2% 65.1%;
     
-    --accent: 225 71% 20%;
+    --accent: 215 28% 18%;
     --accent-foreground: 210 20% 98%;
     
     --destructive: 0 62.8% 30.6%;
