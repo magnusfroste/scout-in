@@ -23,6 +23,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ResearchResults } from './ResearchResults';
+import { getExportFormat, exportResearchToPDF, exportToJSON } from '@/lib/exportUtils';
 
 interface ResearchItem {
   id: string;
@@ -331,6 +332,40 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
     }
   };
 
+  const exportResearch = async (research: ResearchItem) => {
+    const format = getExportFormat();
+    
+    try {
+      if (format === 'pdf') {
+        await exportResearchToPDF(research);
+        toast({
+          title: "PDF Downloaded!",
+          description: "Research analysis exported as PDF",
+        });
+      } else {
+        const exportData = {
+          company: research.prospect_company_name,
+          fitScore: research.fit_score,
+          analysis: research.research_results,
+          completedAt: research.completed_at
+        };
+        
+        const filename = `${research.prospect_company_name.replace(/\s+/g, '_')}_analysis.json`;
+        exportToJSON(exportData, filename);
+        toast({
+          title: "JSON Downloaded!",
+          description: "Research analysis exported as JSON",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "Failed to export analysis. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const canStartResearch = companyProfile?.is_complete && userProfile?.is_complete;
 
   if (loading) {
@@ -515,7 +550,11 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
                       
                       <div className="flex items-center gap-2">
                         {item.status === 'completed' && (
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => exportResearch(item)}
+                          >
                             <Download className="h-4 w-4 mr-2" />
                             Export
                           </Button>
@@ -632,7 +671,11 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
                         <Eye className="h-4 w-4 mr-2" />
                         View Analysis
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => exportResearch(item)}
+                      >
                         <Download className="h-4 w-4 mr-2" />
                         Export
                       </Button>
