@@ -81,6 +81,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedResearch, setSelectedResearch] = useState<ResearchItem | null>(null);
+  const [showOnlyStarred, setShowOnlyStarred] = useState(false);
   
   const { toast } = useToast();
 
@@ -273,7 +274,8 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
   const filteredResearch = research.filter(item => {
     const matchesSearch = item.prospect_company_name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = selectedStatus === 'all' || item.status === selectedStatus;
-    return matchesSearch && matchesStatus;
+    const matchesStarred = !showOnlyStarred || item.is_starred;
+    return matchesSearch && matchesStatus && matchesStarred;
   });
 
   const getStatusBadge = (status: string) => {
@@ -404,13 +406,12 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
       )}
 
       {/* Research Tabs */}
-      <Tabs defaultValue="all" className="space-y-4">
+      <Tabs defaultValue="all" className="space-y-4" onValueChange={setSelectedStatus}>
         <div className="flex items-center justify-between">
           <TabsList>
             <TabsTrigger value="all">All Research</TabsTrigger>
             <TabsTrigger value="pending">Pending</TabsTrigger>
             <TabsTrigger value="completed">Completed</TabsTrigger>
-            <TabsTrigger value="starred">Starred</TabsTrigger>
           </TabsList>
           
           <div className="flex items-center gap-2">
@@ -423,9 +424,14 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
                 className="pl-10 w-64"
               />
             </div>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
+            <Button 
+              variant={showOnlyStarred ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setShowOnlyStarred(!showOnlyStarred)}
+              className="flex items-center gap-2"
+            >
+              <Star className={`h-4 w-4 ${showOnlyStarred ? 'fill-current' : ''}`} />
+              {showOnlyStarred ? 'Show All' : 'Starred Only'}
             </Button>
           </div>
         </div>
@@ -529,29 +535,35 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
         <TabsContent value="pending">
           <div className="grid gap-4">
             {filteredResearch.filter(item => item.status === 'pending').map((item) => (
-              <Card key={item.id}>
+              <Card key={item.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
                         <h3 className="text-lg font-semibold">{item.prospect_company_name}</h3>
-                        <p className="text-muted-foreground">{item.prospect_website_url}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Created {new Date(item.created_at).toLocaleDateString()}
-                        </p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 hover:bg-yellow-100"
+                          onClick={() => toggleStar(item.id, item.is_starred || false)}
+                        >
+                          <Star className={`h-4 w-4 ${item.is_starred ? 'text-yellow-500 fill-current' : 'text-muted-foreground'}`} />
+                        </Button>
+                        {getStatusBadge(item.status)}
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 hover:bg-yellow-100"
-                        onClick={() => toggleStar(item.id, item.is_starred || false)}
-                      >
-                        <Star className={`h-4 w-4 ${item.is_starred ? 'text-yellow-500 fill-current' : 'text-muted-foreground'}`} />
-                      </Button>
+                      
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+                        <span>{item.prospect_website_url}</span>
+                        <span>•</span>
+                        <span className="font-medium text-foreground">Research Type: {item.research_type}</span>
+                      </div>
+                      
+                      <div className="text-xs text-muted-foreground">
+                        Created {new Date(item.created_at).toLocaleDateString()}
+                      </div>
                     </div>
+                    
                     <div className="flex items-center gap-2">
-                      {getStatusBadge(item.status)}
-                      {/* Temporary resend button for development */}
                       <Button 
                         variant="outline" 
                         size="sm"
@@ -572,30 +584,46 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
         <TabsContent value="completed">
           <div className="grid gap-4">
             {filteredResearch.filter(item => item.status === 'completed').map((item) => (
-              <Card key={item.id}>
+              <Card key={item.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
                         <h3 className="text-lg font-semibold">{item.prospect_company_name}</h3>
-                        <p className="text-muted-foreground">{item.prospect_website_url}</p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 hover:bg-yellow-100"
+                          onClick={() => toggleStar(item.id, item.is_starred || false)}
+                        >
+                          <Star className={`h-4 w-4 ${item.is_starred ? 'text-yellow-500 fill-current' : 'text-muted-foreground'}`} />
+                        </Button>
+                        {getStatusBadge(item.status)}
+                      </div>
+                      
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+                        <span>{item.prospect_website_url}</span>
+                        <span>•</span>
+                        <span className="font-medium text-foreground">Research Type: {item.research_type}</span>
                         {item.fit_score && (
-                          <p className={getFitScoreColor(item.fit_score)}>
-                            Fit Score: {item.fit_score}%
-                          </p>
+                          <>
+                            <span>•</span>
+                            <span className={`font-medium ${getFitScoreColor(item.fit_score)}`}>
+                              Fit Score: {item.fit_score}%
+                            </span>
+                          </>
                         )}
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 hover:bg-yellow-100"
-                        onClick={() => toggleStar(item.id, item.is_starred || false)}
-                      >
-                        <Star className={`h-4 w-4 ${item.is_starred ? 'text-yellow-500 fill-current' : 'text-muted-foreground'}`} />
-                      </Button>
+                      
+                      <div className="text-xs text-muted-foreground">
+                        Created {new Date(item.created_at).toLocaleDateString()}
+                        {item.completed_at && (
+                          <span> • Completed {new Date(item.completed_at).toLocaleDateString()}</span>
+                        )}
+                      </div>
                     </div>
+                    
                     <div className="flex items-center gap-2">
-                      {getStatusBadge(item.status)}
                       <Button 
                         variant="outline" 
                         size="sm"
@@ -616,42 +644,6 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
           </div>
         </TabsContent>
 
-        <TabsContent value="starred">
-          <div className="grid gap-4">
-            {filteredResearch.filter(item => item.is_starred).map((item) => (
-              <Card key={item.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div>
-                        <h3 className="text-lg font-semibold">{item.prospect_company_name}</h3>
-                        <p className="text-muted-foreground">{item.prospect_website_url}</p>
-                        {item.fit_score && (
-                          <p className="text-sm">
-                            <span className="text-muted-foreground">Fit Score: </span>
-                            <span className={getFitScoreColor(item.fit_score)}>{item.fit_score}/100</span>
-                          </p>
-                        )}
-                        <p className="text-sm text-muted-foreground">
-                          {item.research_type} • {new Date(item.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 hover:bg-yellow-100"
-                        onClick={() => toggleStar(item.id, item.is_starred || false)}
-                      >
-                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                      </Button>
-                    </div>
-                    {getStatusBadge(item.status)}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
       </Tabs>
 
       {/* Research Results Modal */}
