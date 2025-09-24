@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export type ExportFormat = 'pdf' | 'json';
+export type AccordionExpansion = 'collapsed' | 'expanded';
 
 // Get export format from settings (localStorage for now)
 export const getExportFormat = (): ExportFormat => {
@@ -11,6 +12,16 @@ export const getExportFormat = (): ExportFormat => {
 // Save export format to settings
 export const setExportFormat = (format: ExportFormat) => {
   localStorage.setItem('exportFormat', format);
+};
+
+// Get accordion expansion preference from settings
+export const getAccordionExpanded = (): AccordionExpansion => {
+  return (localStorage.getItem('accordionExpanded') as AccordionExpansion) || 'collapsed';
+};
+
+// Save accordion expansion preference to settings
+export const setAccordionExpanded = (expansion: AccordionExpansion) => {
+  localStorage.setItem('accordionExpanded', expansion);
 };
 
 // PDF Export utility for research results

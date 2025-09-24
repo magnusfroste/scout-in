@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Copy, Download, Users, Target, MessageSquare, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getExportFormat, exportResearchToPDF, exportToJSON } from "@/lib/exportUtils";
+import { getExportFormat, exportResearchToPDF, exportToJSON, getAccordionExpanded } from "@/lib/exportUtils";
 
 interface ResearchItem {
   id: string;
@@ -42,6 +42,7 @@ interface ResearchResultsProps {
 export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) => {
   const { toast } = useToast();
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
+  const accordionExpansion = getAccordionExpanded();
 
   if (!research.research_results || research.status !== 'completed') {
     return (
@@ -185,7 +186,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
             </CardHeader>
             <CardContent>
               {results.strategic_fit_relevance_analysis && (
-                <Accordion type="single" collapsible>
+                <Accordion type="single" collapsible defaultValue={accordionExpansion === 'expanded' ? 'strategic-0' : undefined}>
                   {Object.entries(results.strategic_fit_relevance_analysis).map(([key, value], index) => (
                     <AccordionItem key={index} value={`strategic-${index}`}>
                       <AccordionTrigger className="text-left">
@@ -222,7 +223,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
             </CardHeader>
             <CardContent>
               {results.organization_decision_making_structure && (
-                <Accordion type="single" collapsible>
+                <Accordion type="single" collapsible defaultValue={accordionExpansion === 'expanded' ? 'org-0' : undefined}>
                   {Object.entries(results.organization_decision_making_structure).map(([key, value], index) => (
                     <AccordionItem key={index} value={`org-${index}`}>
                       <AccordionTrigger className="text-left">
@@ -256,7 +257,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
             </CardHeader>
             <CardContent>
               {results.technology_innovation_profile && (
-                <Accordion type="single" collapsible>
+                <Accordion type="single" collapsible defaultValue={accordionExpansion === 'expanded' ? 'tech-0' : undefined}>
                   {Object.entries(results.technology_innovation_profile).map(([key, value], index) => (
                     <AccordionItem key={index} value={`tech-${index}`}>
                       <AccordionTrigger className="text-left">
@@ -293,7 +294,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
             </CardHeader>
             <CardContent>
               {results.contact_strategy_approach && (
-                <Accordion type="single" collapsible>
+                <Accordion type="single" collapsible defaultValue={accordionExpansion === 'expanded' ? 'contact-0' : undefined}>
                   {Object.entries(results.contact_strategy_approach).map(([key, value], index) => (
                     <AccordionItem key={index} value={`contact-${index}`}>
                       <AccordionTrigger className="text-left">
@@ -320,7 +321,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
               {results.personalized_outreach_recommendations && (
                 <div className="mt-6">
                   <h4 className="font-semibold mb-3">Personalized Outreach Recommendations</h4>
-                  <Accordion type="single" collapsible>
+                  <Accordion type="single" collapsible defaultValue={accordionExpansion === 'expanded' ? 'value-0' : undefined}>
                     {Object.entries(results.personalized_outreach_recommendations).map(([key, value], index) => (
                       <AccordionItem key={index} value={`value-${index}`}>
                         <AccordionTrigger className="text-left">

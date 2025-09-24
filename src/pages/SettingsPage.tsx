@@ -3,18 +3,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState, useEffect } from "react";
-import { getExportFormat, setExportFormat, ExportFormat } from "@/lib/exportUtils";
+import { getExportFormat, setExportFormat, ExportFormat, getAccordionExpanded, setAccordionExpanded, AccordionExpansion } from "@/lib/exportUtils";
 
 export default function SettingsPage() {
   const [exportFormat, setCurrentExportFormat] = useState<ExportFormat>("pdf");
+  const [accordionExpansion, setCurrentAccordionExpansion] = useState<AccordionExpansion>("collapsed");
 
   useEffect(() => {
     setCurrentExportFormat(getExportFormat());
+    setCurrentAccordionExpansion(getAccordionExpanded());
   }, []);
 
   const handleExportFormatChange = (format: ExportFormat) => {
     setCurrentExportFormat(format);
     setExportFormat(format);
+  };
+
+  const handleAccordionExpansionChange = (expansion: AccordionExpansion) => {
+    setCurrentAccordionExpansion(expansion);
+    setAccordionExpanded(expansion);
   };
 
   return (
@@ -71,6 +78,38 @@ export default function SettingsPage() {
                 <RadioGroupItem value="json" id="json" />
                 <Label htmlFor="json" className="text-sm">
                   JSON - Raw data for integrations
+                </Label>
+              </div>
+            </RadioGroup>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Research Analysis</CardTitle>
+          <CardDescription>
+            Configure how research analysis content is displayed.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">Accordion Content</Label>
+            <RadioGroup 
+              value={accordionExpansion} 
+              onValueChange={handleAccordionExpansionChange}
+              className="flex flex-col space-y-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="collapsed" id="collapsed" />
+                <Label htmlFor="collapsed" className="text-sm">
+                  Collapsed - Click to expand sections
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="expanded" id="expanded" />
+                <Label htmlFor="expanded" className="text-sm">
+                  Expanded - Show all content by default
                 </Label>
               </div>
             </RadioGroup>
