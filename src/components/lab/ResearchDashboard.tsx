@@ -203,18 +203,18 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
             const responseData = JSON.parse(responseText);
             const analysisOutput = Array.isArray(responseData) ? responseData[0].output : responseData.output;
             
-            if (analysisOutput && analysisOutput.Executive_Summary) {
+            if (analysisOutput && analysisOutput.executive_summary) {
               // Update the research record with parsed analysis
               await supabase
                 .from('lab_prospect_research')
                 .update({
                   status: 'completed',
                   completed_at: new Date().toISOString(),
-                  fit_score: analysisOutput.Executive_Summary.Fit_Score,
+                  fit_score: analysisOutput.executive_summary.fit_score,
                   research_results: analysisOutput,
-                  decision_makers: analysisOutput['2_Organization_Decision_Making_Structure'],
-                  contact_strategy: analysisOutput['7_Contact_Strategy_Approach'],
-                  value_proposition: analysisOutput['8_Personalized_Outreach_Recommendations']
+                  decision_makers: analysisOutput.analysis?.['2_organization_decision_making'],
+                  contact_strategy: analysisOutput.analysis?.['7_contact_strategy_approach'],
+                  value_proposition: analysisOutput.analysis?.['8_personalized_outreach_recommendations']
                 })
                 .eq('id', researchItem.id);
               
@@ -225,7 +225,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
               
               toast({
                 title: "Analysis Complete!",
-                description: `Research analysis completed for ${researchItem.prospect_company_name} (Fit Score: ${analysisOutput.Executive_Summary.Fit_Score}/100)`,
+                description: `Research analysis completed for ${researchItem.prospect_company_name} (Fit Score: ${analysisOutput.executive_summary.fit_score}/100)`,
                 duration: 5000
               });
             } else {
@@ -445,7 +445,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
                           )}
                         </div>
                         
-                        {item.tags.length > 0 && (
+                        {item.tags && item.tags.length > 0 && (
                           <div className="flex flex-wrap gap-1 mb-3">
                             {item.tags.map((tag, index) => (
                               <Badge key={index} variant="outline" className="text-xs">
