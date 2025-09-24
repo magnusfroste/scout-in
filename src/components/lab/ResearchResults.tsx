@@ -141,11 +141,11 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="flex items-start justify-between gap-4">
-                  <p className="text-sm leading-relaxed flex-1">{value as string}</p>
+                  <p className="text-sm leading-relaxed flex-1">{formatSectionContent(value)}</p>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => copyToClipboard(value as string, key)}
+                    onClick={() => copyToClipboard(formatSectionContent(value), key)}
                     className={copiedSection === key ? "text-green-600" : ""}
                   >
                     <Copy className="w-4 h-4" />
@@ -167,11 +167,11 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex items-start justify-between gap-4">
-                <p className="text-sm leading-relaxed flex-1">{value as string}</p>
+                <p className="text-sm leading-relaxed flex-1">{formatSectionContent(value)}</p>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => copyToClipboard(value as string, key)}
+                  onClick={() => copyToClipboard(formatSectionContent(value), key)}
                   className={copiedSection === key ? "text-green-600" : ""}
                 >
                   <Copy className="w-4 h-4" />
