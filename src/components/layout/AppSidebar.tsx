@@ -50,13 +50,16 @@ export function AppSidebar() {
       )}
       collapsible="icon"
     >
-      <SidebarContent className="py-4">
-        <div className="flex items-center justify-between px-4 mb-2">
+      {/* Fixed header that remains visible when collapsed */}
+      <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
+        {!collapsed && (
           <SidebarGroupLabel className="text-sidebar-foreground/60 font-semibold text-xs uppercase tracking-wider">
             Explorer 1100
           </SidebarGroupLabel>
-          <SidebarTrigger className="h-6 w-6 text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors" />
-        </div>
+        )}
+        <SidebarTrigger className="h-6 w-6 text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors ml-auto" />
+      </div>
+      <SidebarContent className="py-4">
         <SidebarGroup>
           <SidebarGroupContent className="mt-2">
             <SidebarMenu>
