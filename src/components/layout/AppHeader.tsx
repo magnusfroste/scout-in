@@ -10,7 +10,7 @@ export function AppHeader() {
           <div className="flex items-center gap-3">
             <div className="hidden sm:block">
               <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
-                Explorer 1100
+                James 1100
               </h1>
               <p className="text-xs text-muted-foreground -mt-1">
                 Prospect Research Platform

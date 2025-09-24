@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Explorer 1100 Light Theme */
+    /* James 1100 Light Theme */
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
     
@@ -39,10 +39,10 @@ All colors MUST be HSL.
     
     --radius: 0.75rem;
     
-    /* Explorer 1100 Brand Colors */
-    --explorer-orange: 20 100% 59%;
-    --explorer-deep-blue: 225 100% 15%;
-    --explorer-light-blue: 220 90% 56%;
+    /* James 1100 Brand Colors */
+    --james-orange: 20 100% 59%;
+    --james-deep-blue: 225 100% 15%;
+    --james-light-blue: 220 90% 56%;
     
     /* Gradients inspired by branding */
     --gradient-primary: linear-gradient(135deg, hsl(225 100% 15%) 0%, hsl(220 90% 56%) 100%);
@@ -104,10 +104,10 @@ All colors MUST be HSL.
     --input: 210 20% 22%;
     --ring: 20 95% 55%;
     
-    /* Explorer 1100 Dark Brand Colors - Refined */
-    --explorer-orange: 20 95% 55%;
-    --explorer-deep-blue: 210 25% 12%;
-    --explorer-light-blue: 210 30% 45%;
+    /* James 1100 Dark Brand Colors - Refined */
+    --james-orange: 20 95% 55%;
+    --james-deep-blue: 210 25% 12%;
+    --james-light-blue: 210 30% 45%;
     
     /* Apple-inspired dark gradients */
     --gradient-primary: linear-gradient(135deg, hsl(210 25% 12%) 0%, hsl(20 95% 55%) 100%);
