@@ -5,10 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Building2, Save, Edit, Check, X } from 'lucide-react';
+import { Building2, Save, Edit, Check, X, Settings } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CompanyProfileWizard } from '@/components/lab/CompanyProfileWizard';
 
 const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
 
@@ -47,6 +51,7 @@ export function EditableCompanyProfile() {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -161,6 +166,50 @@ export function EditableCompanyProfile() {
     setProfile({ ...profile, [field]: value });
   };
 
+  const handleArrayField = (field: keyof CompanyProfile, value: string, checked: boolean) => {
+    if (!profile) return;
+    const currentArray = (profile[field] as string[]) || [];
+    const newArray = checked 
+      ? [...currentArray, value]
+      : currentArray.filter(item => item !== value);
+    setProfile({ ...profile, [field]: newArray });
+  };
+
+  const handleWizardSave = async (data: any) => {
+    setProfile({ ...profile, ...data });
+    setShowWizard(false);
+    
+    // Auto-save the profile
+    const profileData = {
+      user_id: DEMO_USER_ID,
+      ...profile,
+      ...data,
+      is_complete: !!(data.company_name && data.website_url && data.industry && data.mission)
+    };
+
+    try {
+      const { error } = await supabase
+        .from('lab_company_profiles')
+        .upsert(profileData, { onConflict: 'user_id' });
+
+      if (error) throw error;
+
+      toast({
+        title: "Profile updated",
+        description: "Your company profile has been updated from the wizard."
+      });
+      
+      loadProfile();
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      toast({
+        title: "Error saving profile",
+        description: "Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -199,6 +248,16 @@ export function EditableCompanyProfile() {
     return Math.round(((completedRequired / requiredFields.length) * 70) + ((completedOptional / optionalFields.length) * 30));
   })();
 
+  if (showWizard) {
+    return (
+      <CompanyProfileWizard
+        initialData={profile || {}}
+        onSave={handleWizardSave}
+        onCancel={() => setShowWizard(false)}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -223,6 +282,10 @@ export function EditableCompanyProfile() {
         </div>
         
         <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowWizard(true)}>
+            <Settings className="h-4 w-4 mr-2" />
+            Re-run Setup Wizard
+          </Button>
           {isEditing ? (
             <>
               <Button 
@@ -296,12 +359,23 @@ export function EditableCompanyProfile() {
             <div className="space-y-2">
               <Label htmlFor="industry">Industry *</Label>
               {isEditing ? (
-                <Input
-                  id="industry"
-                  value={profile.industry}
-                  onChange={(e) => updateField('industry', e.target.value)}
-                  placeholder="e.g., Technology, Healthcare, Finance"
-                />
+                <Select value={profile.industry} onValueChange={(value) => updateField('industry', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select industry" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="technology">Technology</SelectItem>
+                    <SelectItem value="healthcare">Healthcare</SelectItem>
+                    <SelectItem value="finance">Finance</SelectItem>
+                    <SelectItem value="education">Education</SelectItem>
+                    <SelectItem value="retail">Retail</SelectItem>
+                    <SelectItem value="manufacturing">Manufacturing</SelectItem>
+                    <SelectItem value="consulting">Consulting</SelectItem>
+                    <SelectItem value="marketing">Marketing</SelectItem>
+                    <SelectItem value="real-estate">Real Estate</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
               ) : (
                 <p className="py-2 px-3 border rounded-md bg-muted/30">{profile.industry || 'Not specified'}</p>
               )}
@@ -310,12 +384,19 @@ export function EditableCompanyProfile() {
             <div className="space-y-2">
               <Label htmlFor="company_size">Company Size *</Label>
               {isEditing ? (
-                <Input
-                  id="company_size"
-                  value={profile.company_size}
-                  onChange={(e) => updateField('company_size', e.target.value)}
-                  placeholder="e.g., 1-10, 11-50, 51-200"
-                />
+                <Select value={profile.company_size} onValueChange={(value) => updateField('company_size', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select company size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1-10">1-10 employees</SelectItem>
+                    <SelectItem value="11-50">11-50 employees</SelectItem>
+                    <SelectItem value="51-200">51-200 employees</SelectItem>
+                    <SelectItem value="201-500">201-500 employees</SelectItem>
+                    <SelectItem value="501-1000">501-1000 employees</SelectItem>
+                    <SelectItem value="1000+">1000+ employees</SelectItem>
+                  </SelectContent>
+                </Select>
               ) : (
                 <p className="py-2 px-3 border rounded-md bg-muted/30">{profile.company_size || 'Not specified'}</p>
               )}
