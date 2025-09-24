@@ -1,4 +1,4 @@
-import { Building2, User, BarChart3, Settings, Search, History } from "lucide-react";
+import { Building2, User, BarChart3, Settings, Search } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
@@ -7,6 +7,10 @@ const items = [{
   url: "/",
   icon: BarChart3
 }, {
+  title: "New Research",
+  url: "/research",
+  icon: Search
+}, {
   title: "Company Profile",
   url: "/company-profile",
   icon: Building2
@@ -14,14 +18,6 @@ const items = [{
   title: "User Profile",
   url: "/user-profile",
   icon: User
-}, {
-  title: "New Research",
-  url: "/research",
-  icon: Search
-}, {
-  title: "Research History",
-  url: "/history",
-  icon: History
 }, {
   title: "Settings",
   url: "/settings",

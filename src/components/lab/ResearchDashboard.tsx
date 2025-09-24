@@ -346,7 +346,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Research Dashboard</h1>
+          <h1 className="text-3xl font-bold">Prospect Exploration</h1>
           <p className="text-muted-foreground">
             Manage your company research and prospect analysis
           </p>
