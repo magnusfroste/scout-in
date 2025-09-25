@@ -118,14 +118,9 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
     return "bg-red-500";
   };
 
+  // Simplified - now expects direct markdown strings
   const formatSectionContent = (content: any) => {
-    if (typeof content === 'string') return content;
-    if (typeof content === 'object') {
-      return Object.entries(content)
-        .map(([key, value]) => `**${key.replace(/_/g, ' ')}**: ${value}`)
-        .join('\n\n');
-    }
-    return JSON.stringify(content, null, 2);
+    return typeof content === 'string' ? content : String(content);
   };
 
   const renderMarkdownContent = (content: string) => (
@@ -272,7 +267,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
             <div>
               <h3 className="font-semibold mb-2">Executive Summary</h3>
               <div className="text-sm leading-relaxed">
-                {renderMarkdownContent(typeof results.executive_summary === 'string' ? results.executive_summary : results.executive_summary.overall_assessment)}
+                {renderMarkdownContent(results.executive_summary)}
               </div>
             </div>
           )}
@@ -297,7 +292,20 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {results.analysis?.['1_strategic_fit_relevance'] && renderContent(results.analysis['1_strategic_fit_relevance'], 'strategic')}
+              {results.strategic_fit && (
+                <div className="text-sm leading-relaxed">
+                  {renderMarkdownContent(results.strategic_fit)}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(results.strategic_fit, 'Strategic Fit')}
+                    className={`mt-2 ${copiedSection === 'Strategic Fit' ? "text-green-600" : ""}`}
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -311,7 +319,20 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {results.analysis?.['2_organization_decision_making'] && renderContent(results.analysis['2_organization_decision_making'], 'org')}
+              {results.decision_makers && (
+                <div className="text-sm leading-relaxed">
+                  {renderMarkdownContent(results.decision_makers)}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(results.decision_makers, 'Decision Makers')}
+                    className={`mt-2 ${copiedSection === 'Decision Makers' ? "text-green-600" : ""}`}
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -322,7 +343,20 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
               <CardTitle>Technology & Innovation Profile</CardTitle>
             </CardHeader>
             <CardContent>
-              {results.analysis?.['5_technology_innovation_profile'] && renderContent(results.analysis['5_technology_innovation_profile'], 'tech')}
+              {results.technology_profile && (
+                <div className="text-sm leading-relaxed">
+                  {renderMarkdownContent(results.technology_profile)}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(results.technology_profile, 'Technology Profile')}
+                    className={`mt-2 ${copiedSection === 'Technology Profile' ? "text-green-600" : ""}`}
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -336,12 +370,18 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {results.analysis?.['7_contact_strategy_approach'] && renderContent(results.analysis['7_contact_strategy_approach'], 'contact')}
-
-              {results.analysis?.['8_personalized_outreach_recommendations'] && (
-                <div className="mt-6">
-                  <h4 className="font-semibold mb-3">Personalized Outreach Recommendations</h4>
-                  {renderContent(results.analysis['8_personalized_outreach_recommendations'], 'value')}
+              {results.contact_strategy && (
+                <div className="text-sm leading-relaxed">
+                  {renderMarkdownContent(results.contact_strategy)}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(results.contact_strategy, 'Contact Strategy')}
+                    className={`mt-2 ${copiedSection === 'Contact Strategy' ? "text-green-600" : ""}`}
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
+                  </Button>
                 </div>
               )}
             </CardContent>

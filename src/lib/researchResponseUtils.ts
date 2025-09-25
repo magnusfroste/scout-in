@@ -29,21 +29,16 @@ export const parseAndSaveN8nResponse = async (
       : responseData.output;
     
     if (analysisOutput && typeof analysisOutput.fit_score === 'number') {
-      // Create structured research results for database storage
+      // Store direct markdown strings from new n8n prompt
       const researchResults = {
-        executive_summary: {
-          fit_score: analysisOutput.fit_score,
-          content: analysisOutput.executive_summary || ''
-        },
-        analysis: {
-          '1_strategic_fit_relevance': analysisOutput.strategic_fit || '',
-          '2_organization_decision_making': analysisOutput.decision_makers || '',
-          '3_change_capacity_digital_maturity': analysisOutput.change_capacity || '',
-          '4_current_challenges_market_position': analysisOutput.challenges_position || '',
-          '5_technology_innovation_profile': analysisOutput.technology_profile || '',
-          '6_business_impact_financial': analysisOutput.business_impact || '',
-          '7_contact_strategy_approach': analysisOutput.contact_strategy || ''
-        }
+        executive_summary: analysisOutput.executive_summary || '',
+        strategic_fit: analysisOutput.strategic_fit || '',
+        decision_makers: analysisOutput.decision_makers || '',
+        change_capacity: analysisOutput.change_capacity || '',
+        challenges_position: analysisOutput.challenges_position || '',
+        technology_profile: analysisOutput.technology_profile || '',
+        business_impact: analysisOutput.business_impact || '',
+        contact_strategy: analysisOutput.contact_strategy || ''
       };
 
       // Update the research record with parsed analysis
