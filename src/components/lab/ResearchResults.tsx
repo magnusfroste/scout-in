@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Copy, Download, Users, Target, MessageSquare, TrendingUp } from "lucide-react";
+import { Copy, Download, Users, Target, MessageSquare, TrendingUp, Cpu, AlertTriangle, Settings, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { exportResearchToPDF, exportToJSON, getExportFormat, getResearchDisplayStyle } from "@/lib/exportUtils";
 
@@ -234,6 +234,33 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
     return displayStyle === 'spacious' ? renderAsCards(data, prefix) : renderAccordion(data, prefix);
   };
 
+  // Section mapping for icons and titles
+  const getSectionConfig = (key: string) => {
+    const configs: Record<string, { icon: any; title: string }> = {
+      strategic_fit: { icon: Target, title: "Strategic Fit & Relevance" },
+      decision_makers: { icon: Users, title: "Organization & Decision Making" },
+      technology_profile: { icon: Cpu, title: "Technology & Innovation Profile" },
+      contact_strategy: { icon: MessageSquare, title: "Contact Strategy & Recommendations" },
+      business_impact: { icon: TrendingUp, title: "Business Impact & Financial Intelligence" },
+      challenges_position: { icon: AlertTriangle, title: "Current Challenges & Market Position" },
+      change_capacity: { icon: Settings, title: "Change Capacity & Digital Maturity" }
+    };
+    
+    return configs[key] || { 
+      icon: FileText, 
+      title: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) 
+    };
+  };
+
+  // Get all sections except executive_summary (handled separately)
+  const getSectionsToRender = () => {
+    if (!results || typeof results !== 'object') return [];
+    
+    return Object.entries(results)
+      .filter(([key]) => key !== 'executive_summary')
+      .filter(([, value]) => value && String(value).trim());
+  };
+
   return (
     <div className="space-y-6">
       {/* Header with Fit Score */}
@@ -274,103 +301,36 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
         </CardContent>
       </Card>
 
-      {/* Detailed Analysis Sections */}
-      {results.strategic_fit && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5" />
-              Strategic Fit & Relevance
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm leading-relaxed">
-              {renderMarkdownContent(results.strategic_fit)}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => copyToClipboard(results.strategic_fit, 'Strategic Fit')}
-                className={`mt-2 ${copiedSection === 'Strategic Fit' ? "text-green-600" : ""}`}
-              >
-                <Copy className="w-4 h-4 mr-2" />
-                Copy
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {results.decision_makers && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              Organization & Decision Making
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm leading-relaxed">
-              {renderMarkdownContent(results.decision_makers)}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => copyToClipboard(results.decision_makers, 'Decision Makers')}
-                className={`mt-2 ${copiedSection === 'Decision Makers' ? "text-green-600" : ""}`}
-              >
-                <Copy className="w-4 h-4 mr-2" />
-                Copy
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {results.technology_profile && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Technology & Innovation Profile</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm leading-relaxed">
-              {renderMarkdownContent(results.technology_profile)}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => copyToClipboard(results.technology_profile, 'Technology Profile')}
-                className={`mt-2 ${copiedSection === 'Technology Profile' ? "text-green-600" : ""}`}
-              >
-                <Copy className="w-4 h-4 mr-2" />
-                Copy
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {results.contact_strategy && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5" />
-              Contact Strategy & Recommendations
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm leading-relaxed">
-              {renderMarkdownContent(results.contact_strategy)}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => copyToClipboard(results.contact_strategy, 'Contact Strategy')}
-                className={`mt-2 ${copiedSection === 'Contact Strategy' ? "text-green-600" : ""}`}
-              >
-                <Copy className="w-4 h-4 mr-2" />
-                Copy
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Dynamic Analysis Sections */}
+      {getSectionsToRender().map(([key, value]) => {
+        const config = getSectionConfig(key);
+        const IconComponent = config.icon;
+        
+        return (
+          <Card key={key}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <IconComponent className="w-5 h-5" />
+                {config.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-sm leading-relaxed">
+                {renderMarkdownContent(formatSectionContent(value))}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copyToClipboard(formatSectionContent(value), config.title)}
+                  className={`mt-2 ${copiedSection === config.title ? "text-green-600" : ""}`}
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 };

@@ -2,15 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export interface N8nAnalysisResponse {
   fit_score?: number;
-  status?: string;
-  executive_summary?: string;
-  strategic_fit?: string;
-  decision_makers?: string;
-  change_capacity?: string;
-  challenges_position?: string;
-  technology_profile?: string;
-  business_impact?: string;
-  contact_strategy?: string;
+  [key: string]: any; // Allow any additional fields from n8n
 }
 
 /**
@@ -29,17 +21,13 @@ export const parseAndSaveN8nResponse = async (
       : responseData.output;
     
     if (analysisOutput && typeof analysisOutput.fit_score === 'number') {
-      // Store direct markdown strings from new n8n prompt
-      const researchResults = {
-        executive_summary: analysisOutput.executive_summary || '',
-        strategic_fit: analysisOutput.strategic_fit || '',
-        decision_makers: analysisOutput.decision_makers || '',
-        change_capacity: analysisOutput.change_capacity || '',
-        challenges_position: analysisOutput.challenges_position || '',
-        technology_profile: analysisOutput.technology_profile || '',
-        business_impact: analysisOutput.business_impact || '',
-        contact_strategy: analysisOutput.contact_strategy || ''
-      };
+      // Dynamically capture ALL fields from n8n response except fit_score
+      const researchResults = Object.entries(analysisOutput)
+        .filter(([key]) => key !== 'fit_score' && key !== 'status')
+        .reduce((acc, [key, value]) => ({
+          ...acc,
+          [key]: value || ''
+        }), {});
 
       // Update the research record with parsed analysis
       const { error } = await supabase
@@ -48,10 +36,7 @@ export const parseAndSaveN8nResponse = async (
           status: 'completed',
           completed_at: new Date().toISOString(),
           fit_score: analysisOutput.fit_score,
-          research_results: researchResults as any,
-          decision_makers: analysisOutput.decision_makers || '',
-          contact_strategy: analysisOutput.contact_strategy || '',
-          value_proposition: analysisOutput.business_impact || ''
+          research_results: researchResults as any
         })
         .eq('id', researchId);
       
