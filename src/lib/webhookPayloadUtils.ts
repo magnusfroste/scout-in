@@ -32,7 +32,6 @@ export interface EnhancedWebhookPayload {
   metadata: PayloadMetadata;
 }
 
-
 /**
  * Enhances the webhook payload with intelligent processing hints for n8n workflows
  */

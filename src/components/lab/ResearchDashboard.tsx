@@ -79,7 +79,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
   const [research, setResearch] = useState<ResearchItem[]>([]);
   const [companyProfile, setCompanyProfile] = useState<CompanyProfile | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [initialLoading, setInitialLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedResearch, setSelectedResearch] = useState<ResearchItem | null>(null);
@@ -98,7 +98,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
     const hasPending = research.some(r => r.status === 'pending');
     if (hasPending) {
       interval = setInterval(() => {
-        loadData(true); // Silent refresh during polling
+        loadData();
       }, 3000); // Poll every 3 seconds when there's pending research
     }
     
@@ -110,11 +110,9 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
   // Dummy user ID for POC demo
   const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
 
-  const loadData = async (silent = false) => {
+  const loadData = async () => {
     try {
-      if (!silent) {
-        setInitialLoading(true);
-      }
+      setLoading(true);
       
       // Load user's research
       const { data: researchData, error: researchError } = await supabase
@@ -174,9 +172,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
         variant: "destructive"
       });
     } finally {
-      if (!silent) {
-        setInitialLoading(false);
-      }
+      setLoading(false);
     }
   };
 
@@ -387,10 +383,10 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
 
   const canStartResearch = companyProfile?.is_complete && userProfile?.is_complete;
 
-  if (initialLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-pulse rounded-full h-8 w-8 bg-primary/20"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
