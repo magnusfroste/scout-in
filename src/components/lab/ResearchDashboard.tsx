@@ -89,7 +89,17 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
 
   useEffect(() => {
     loadData();
-  }, []);
+    
+    // Set up polling for pending research updates
+    const interval = setInterval(() => {
+      const hasPendingResearch = research.some(item => item.status === 'pending');
+      if (hasPendingResearch) {
+        loadData();
+      }
+    }, 5000); // Poll every 5 seconds if there's pending research
+
+    return () => clearInterval(interval);
+  }, [research]);
 
   // Dummy user ID for POC demo
   const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
@@ -127,6 +137,22 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
 
       if (userError) {
         console.error('User profile error:', userError);
+      }
+
+      // Check for newly completed research and show notifications
+      if (researchData && research.length > 0) {
+        const newlyCompleted = researchData.filter(newItem => 
+          newItem.status === 'completed' && 
+          research.find(oldItem => oldItem.id === newItem.id && oldItem.status === 'pending')
+        );
+        
+        newlyCompleted.forEach(item => {
+          toast({
+            title: "Research Complete!",
+            description: `Analysis finished for ${item.prospect_company_name}${item.fit_score ? ` (Fit Score: ${item.fit_score}%)` : ''}`,
+            duration: 6000
+          });
+        });
       }
 
       setResearch(researchData || []);

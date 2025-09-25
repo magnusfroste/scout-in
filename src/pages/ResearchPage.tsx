@@ -53,14 +53,25 @@ const ResearchPage = () => {
           research_type: data.research_type || 'standard',
           notes: data.notes || '',
           webhook_url: webhookUrl,
-          status: 'pending'
+          status: 'pending',
+          started_at: new Date().toISOString()
         })
         .select()
         .single();
 
       if (insertError) throw insertError;
 
-      // Prepare enhanced webhook payload
+      // Show success message and redirect immediately
+      toast({
+        title: "Research Started!",
+        description: `Research initiated for ${data.company_name}. You can track progress in the dashboard.`,
+        duration: 5000
+      });
+
+      // Redirect to dashboard immediately
+      navigate('/');
+
+      // Send webhook request in background (fire-and-forget)
       const webhookPayload = enhanceWebhookPayload(
         data,
         companyProfile.data,
@@ -68,20 +79,18 @@ const ResearchPage = () => {
         researchRecord.id
       );
 
-      // Send POST request to webhook endpoint and wait for response
       console.log('🚀 Sending webhook to:', webhookUrl);
       console.log('📦 Payload:', JSON.stringify(webhookPayload, null, 2));
       
-      try {
-        const response = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookPayload),
-          mode: 'cors'
-        });
-
+      // Background webhook processing - don't await this
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(webhookPayload),
+        mode: 'cors'
+      }).then(async (response) => {
         console.log('📡 Response status:', response.status);
         console.log('📡 Response ok:', response.ok);
 
@@ -90,53 +99,44 @@ const ResearchPage = () => {
           console.log('✅ Webhook response:', responseText);
           
           // Parse and save the n8n analysis response
-          const parseResult = await parseAndSaveN8nResponse(
+          await parseAndSaveN8nResponse(
             responseText, 
             researchRecord.id, 
             data.company_name
           );
-          
-          if (parseResult.success) {
-            toast({
-              title: "Analysis Complete!",
-              description: `Research analysis completed for ${data.company_name}${parseResult.fitScore ? ` (Fit Score: ${parseResult.fitScore}/100)` : ''}`,
-              duration: 5000
-            });
-          } else {
-            toast({
-              title: "Analysis Received",
-              description: `Research data sent for ${data.company_name}, but analysis parsing failed: ${parseResult.error}`,
-              variant: "destructive",
-              duration: 5000
-            });
-          }
         } else {
           const errorText = await response.text();
           console.error('❌ Webhook error response:', errorText);
-          throw new Error(`Webhook failed: ${response.status} - ${errorText}`);
+          
+          // Update research record with error
+          await supabase
+            .from('lab_prospect_research')
+            .update({ 
+              status: 'failed', 
+              error_message: `Webhook failed: ${response.status} - ${errorText}` 
+            })
+            .eq('id', researchRecord.id);
         }
-      } catch (webhookError) {
+      }).catch(async (webhookError) => {
         console.error('🚨 Fetch error:', webhookError);
         
-        // Check if it's a CORS error
+        // Update research record with error
+        let errorMessage = 'Unknown webhook error';
         if (webhookError instanceof TypeError && webhookError.message.includes('Failed to fetch')) {
-          toast({
-            title: "CORS Error", 
-            description: `Cannot reach ${webhookUrl} - likely a CORS issue. Check n8n webhook settings.`,
-            variant: "destructive",
-            duration: 8000
-          });
+          errorMessage = `Cannot reach ${webhookUrl} - likely a CORS issue. Check n8n webhook settings.`;
         } else {
-          toast({
-            title: "Research Started (Webhook Failed)",
-            description: `Research created but webhook failed. Research ID: ${researchRecord.id}`,
-            variant: "destructive",
-            duration: 8000
-          });
+          errorMessage = webhookError.message || 'Webhook request failed';
         }
-      }
+        
+        await supabase
+          .from('lab_prospect_research')
+          .update({ 
+            status: 'failed', 
+            error_message: errorMessage 
+          })
+          .eq('id', researchRecord.id);
+      });
 
-      navigate('/');
     } catch (error) {
       console.error('Error starting research:', error);
       toast({
