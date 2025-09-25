@@ -1,4 +1,4 @@
-# N8N User Prompt v3.0 - GPT-5 Intelligent Brief
+# N8N User Prompt v3.1 - GPT-5 Intelligent Brief
 
 ## Enhanced Research Brief with N8N Syntax
 
@@ -37,7 +37,8 @@ Use the "fill the gaps" methodology for smart tool selection:
 **Size:** {{ $json.body.company_profile.company_size }}
 **Target Market:** {{ $json.body.company_profile.target_market }}
 **Value Props:** {{ $json.body.company_profile.value_propositions }}
-**Challenges:** {{ $json.body.company_profile.current_challenges }}
+**Main Offerings:** {{ $json.body.company_profile.main_offerings }}
+**Typical Results:** {{ $json.body.company_profile.typical_results }}
 
 ## USER PROFILE CONTEXT  
 **Role:** {{ $json.body.user_profile.job_title }}
@@ -98,4 +99,4 @@ Using GPT-5 intelligent tool orchestration, conduct Enhanced Wassching Method an
 
 ---
 
-**Version**: 3.0 | **Compatibility**: GPT-5, Claude 4 | **Syntax**: Pure N8N {{ }} | **Focus**: Intelligent Efficiency
+**Version**: 3.1 | **Compatibility**: GPT-5, Claude 4 | **Syntax**: Pure N8N {{ }} | **Focus**: Intelligent Efficiency
