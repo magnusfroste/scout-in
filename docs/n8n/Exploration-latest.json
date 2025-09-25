@@ -1,0 +1,423 @@
+{
+  "name": "Exploration-Quality-Test",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "exploration",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -480,
+        144
+      ],
+      "id": "8ee540ff-e548-42e5-a757-c7a2703a116c",
+      "name": "Webhook",
+      "webhookId": "exploration-quality"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b56cb082-eff8-4857-bca0-a89e502e7c4d",
+              "name": "user_prompt",
+              "value": "=# Executive Research Brief – Inputs & Directive (JSON‑only)  TARGET INTELLIGENCE - Company: {{ $json.body.prospect_data.company_name }} - Website: {{ $json.body.prospect_data.website_url }} - Research Type: {{ $json.body.processing_hints.research_depth }} - Priority: {{ $json.body.processing_hints.priority_level }}  CONTEXT (Profiles & Hints) {{ JSON.stringify($json.body, null, 2) }}  METHOD 1) Start with strategic reasoning. Never start with a tool call. 2) If website facts are required, call Jina Reader with the website URL (only if payload lacks the needed fact). 3) If market/competition gaps remain, call Tavily (keep max_results small and query specific). 4) Use Gemini only for competitive validation/second opinion. 5) Use Claude for final synthesis and executive framing. 6) Use Hunter only if explicit contact discovery is required.  DELIVERABLE - Produce the JSON object exactly as defined in the System prompt OUTPUT FORMAT (including a top‑level fit_score mirroring executive_summary.fit_score). - Populate each section with clear, concise, consultancy‑grade content. - Include \"sources.tools_used\" listing which tools influenced the output. - Do NOT include code fences or extra prose; JSON only.",
+              "type": "string"
+            },
+            {
+              "id": "f902f89f-62b7-44d0-9a0c-10d43f246580",
+              "name": "system_prompt",
+              "value": "=# System v3.3 – GPT‑5 Intelligent Wassching Method (JSON‑only)  ROLE: You are an elite business analyst applying the Enhanced Wassching Method with intelligent tool orchestration. Use 'fill the gaps': only call tools when they materially improve accuracy. Prefer fewer, higher‑value calls.  QUALITY BAR: - Consultancy‑grade, executive‑ready analysis - Quantified insights, confidence levels, and clear recommendations - Cite which tools informed which sections  TOOL POLICY: - Start with reasoning; call tools only if evidence is missing or uncertain - Jina Reader → company website facts and messaging - Tavily → market/competition (limit scope/results) - Gemini → competitive validation or second‑opinion synthesis - Claude → strategic synthesis and executive framing - Hunter → ONLY if contact discovery is explicitly needed  OUTPUT FORMAT (MANDATORY): Return a single JSON object (no code fences, no prose), with all fields containing pre‑formatted Markdown where noted: {   \"executive_summary\": {     \"fit_score\": number,     \"overall_assessment\": string,     \"key_opportunities\": string,     \"risk_factors\": string,     \"recommended_approach\": string   },   \"strategic_fit\": string,   \"decision_makers\": string,   \"change_capacity\": string,   \"challenges_position\": string,   \"technology_integration\": string,   \"financial_impact\": string,   \"contact_strategy\": string,   \"implementation_roadmap\": string,   \"sources\": {     \"tools_used\": string[],     \"notes\": string   },   \"fit_score\": number }  DECISION POLICY: - Do NOT call any tool as your first action. - First, reason using ONLY the provided payload. Summarize what is already known, then list specific gaps. - If gaps remain, select EXACTLY ONE best‑fit tool to close the most important gap. - Jina Reader preconditions: website_url present AND a concrete website fact is required that is not in the payload. - Tavily preconditions: market/competitive gap remains AND a very specific query is defined. - If the payload already suffices for a section, do not call tools; proceed to analysis.  STRICT RULES: - Output MUST be valid JSON only (no code fences) - Keep within token budget; be concise but complete - If data is unknown, say 'Unknown' and suggest next action - Add confidence statements where useful - Do not over‑call tools; justify when used - IMPORTANT: Include a top‑level numeric field fit_score (0–100) that mirrors executive_summary.fit_score.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -256,
+        144
+      ],
+      "id": "f77cdfe7-59dc-402a-b883-e8757917aad8",
+      "name": "Set System & User Prompts"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {
+          "responseFormat": "json_object"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -256,
+        352
+      ],
+      "id": "eaa85213-60b3-4ef8-a2d4-d98ce5849ae7",
+      "name": "OpenAI Chat Model (GPT-5)",
+      "credentials": {
+        "openAiApi": {
+          "id": "SKYM5wHsET770ybx",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.user_prompt }}",
+        "options": {
+          "systemMessage": "={{ $json.system_prompt }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -48,
+        144
+      ],
+      "id": "a9c8ee4f-fe76-4b64-864e-f8ac167a3430",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Get company information from home page (Jina Reader)",
+        "method": "POST",
+        "url": "=https://r.jina.ai/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"url\": \"{url}\"\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "url",
+              "description": "Website URL",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -48,
+        320
+      ],
+      "id": "18921875-5911-430e-8140-2e7e33274551",
+      "name": "Jina Reader",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Bsa9Gc5BY6Hs8YS6",
+          "name": "Tavily Search"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Tavily market intelligence search (limited results)",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"{query}\",\n  \"max_results\": 5\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "query",
+              "description": "Search query",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        320
+      ],
+      "id": "d44e216c-e2bf-4659-a99b-c05a9b495e68",
+      "name": "Tavily Search",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Bsa9Gc5BY6Hs8YS6",
+          "name": "Tavily Search"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Prompt', ``, 'string') }}"
+            }
+          ]
+        },
+        "jsonOutput": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Output_Content_as_JSON', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGeminiTool",
+      "typeVersion": 1,
+      "position": [
+        320,
+        320
+      ],
+      "id": "e0ee39ef-4237-4a01-98d6-93fd3ae7a16a",
+      "name": "Gemini 2.5 Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "t8QSkQ7noMatvDKn",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "claude-sonnet-4-20250514",
+          "mode": "list",
+          "cachedResultName": "claude-sonnet-4-20250514"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Prompt', ``, 'string') }}"
+            }
+          ]
+        },
+        "addAttachments": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Add_Attachments', ``, 'boolean') }}",
+        "simplify": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Simplify_Output', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.anthropicTool",
+      "typeVersion": 1,
+      "position": [
+        512,
+        320
+      ],
+      "id": "a437eff8-565d-4c19-aa65-c83b82b25d0c",
+      "name": "Claude Sonnet 4",
+      "credentials": {
+        "anthropicApi": {
+          "id": "OgLogyhXu7YjAaxq",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Find company contact details (optional)",
+        "domain": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Domain', ``, 'string') }}",
+        "limit": 1,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.hunterTool",
+      "typeVersion": 1,
+      "position": [
+        688,
+        320
+      ],
+      "id": "824189e4-e684-4673-b710-08dd32e7b321",
+      "name": "Hunter (Optional)",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "parse-out",
+              "name": "output",
+              "type": "object",
+              "value": "={{ $json.output.replace(/```json/g, '').replace(/```/g, '').parseJson() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dbe47369-d26e-4bf1-9e4f-95776a0e5c64",
+      "name": "Parse Response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        352,
+        144
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        576,
+        144
+      ],
+      "id": "cf80e194-3520-4c37-adca-c09f8e9c5806",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Set System & User Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set System & User Prompts": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model (GPT-5)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jina Reader": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 2.5 Flash": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Sonnet 4": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hunter (Optional)": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a6e5d872-a5ee-4a03-a2a3-014d792353a3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "08235bca6a726c63e9aa9956ca020792030a72dba9f6bc023ffbb3b8a642a8e5"
+  },
+  "id": "H0tm6651QZuQnurS",
+  "tags": []
+}
