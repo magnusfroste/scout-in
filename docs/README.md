@@ -10,6 +10,7 @@ This directory contains comprehensive documentation for the Research Engine syst
 - **[Payload Structure](./payload/README.md)** - Enhanced webhook payload documentation
 - **[Response Parsing](./response/README.md)** - How JSON responses are parsed and displayed
 - **[Development Guide](./development/README.md)** - Development guidelines and best practices
+- **[Profile System](./profiles/README.md)** - User and company profile questions and form structure
 
 ### Quick Reference
 - **[System Prompt](./n8n/system-prompt.md)** - Current N8N system prompt (paste into N8N)
