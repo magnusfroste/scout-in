@@ -106,6 +106,37 @@ export const exportResearchToPDF = async (research: any): Promise<void> => {
         .trim();
     };
 
+    // Format any content type (string, array, object) into readable PDF text
+    const formatContentForPDF = (content: any): string => {
+      if (content === null || content === undefined) return '';
+      if (typeof content === 'string') return cleanMarkdownText(content);
+      if (typeof content === 'number' || typeof content === 'boolean') return String(content);
+      if (Array.isArray(content)) {
+        const items = content
+          .map((item) => formatContentForPDF(item))
+          .filter(Boolean);
+        return items.length ? items.map((t) => `• ${t}`).join('\n') : '';
+      }
+      if (typeof content === 'object') {
+        const obj = content as Record<string, any>;
+        if (typeof obj.summary === 'string') return cleanMarkdownText(obj.summary);
+        if (typeof obj.overview === 'string') return cleanMarkdownText(obj.overview);
+        const lines: string[] = [];
+        Object.entries(obj).forEach(([key, value]) => {
+          const val = formatContentForPDF(value);
+          if (!val) return;
+          const title = key.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+          lines.push(`${title}: ${val}`);
+        });
+        return lines.join('\n');
+      }
+      try {
+        return JSON.stringify(content, null, 2);
+      } catch {
+        return String(content);
+      }
+    };
+
     // Header
     addWrappedText(`Research Analysis Report`, 18, true);
     addWrappedText(`Company: ${research.prospect_company_name}`, 14, true);
@@ -119,27 +150,27 @@ export const exportResearchToPDF = async (research: any): Promise<void> => {
     }
 
     // Executive Summary (handled separately)
-    if (research.research_results?.executive_summary) {
+    if (research.research_results?.executive_summary !== undefined) {
       addWrappedText('Executive Summary', 16, true);
-      const summary = typeof research.research_results.executive_summary === 'string' 
-        ? research.research_results.executive_summary 
-        : String(research.research_results.executive_summary);
-      addWrappedText(cleanMarkdownText(summary), 11);
-      yPosition += 10;
+      const formattedSummary = formatContentForPDF(research.research_results.executive_summary);
+      if (formattedSummary.trim()) {
+        addWrappedText(formattedSummary, 11);
+        yPosition += 10;
+      }
     }
 
     // Dynamic sections (all fields except executive_summary)
     if (research.research_results && typeof research.research_results === 'object') {
       const sections = Object.entries(research.research_results)
-        .filter(([key]) => key !== 'executive_summary')
-        .filter(([, value]) => value && String(value).trim());
+        .filter(([key]) => key !== 'executive_summary');
 
       sections.forEach(([key, value]) => {
+        const formatted = formatContentForPDF(value);
+        if (!formatted || !formatted.trim()) return;
+
         const sectionTitle = getSectionTitle(key);
         addWrappedText(sectionTitle, 16, true);
-        
-        const content = typeof value === 'string' ? value : String(value);
-        addWrappedText(cleanMarkdownText(content), 11);
+        addWrappedText(formatted, 11);
         yPosition += 10;
       });
     }
