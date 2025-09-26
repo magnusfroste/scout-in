@@ -25,6 +25,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { ResearchResults } from './ResearchResults';
 import { getExportFormat, exportResearchToPDF, exportToJSON } from '@/lib/exportUtils';
 import { parseAndSaveN8nResponse } from '@/lib/researchResponseUtils';
+import { enhanceWebhookPayload } from '@/lib/webhookPayloadUtils';
 
 interface ResearchItem {
   id: string;
@@ -197,20 +198,21 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
 
       const webhookUrl = webhookData?.webhook_url || 'https://example.com/webhook';
 
-      // Prepare the webhook payload
-      const webhookPayload = {
-        prospect_data: {
-          company_name: researchItem.prospect_company_name,
-          website_url: researchItem.prospect_website_url,
-          linkedin_url: researchItem.prospect_linkedin_url,
-          research_type: researchItem.research_type,
-          notes: researchItem.notes || ''
-        },
-        company_profile: companyProfile.data,
-        user_profile: userProfile.data,
-        timestamp: new Date().toISOString(),
-        research_id: researchItem.id
+      // Prepare the enhanced webhook payload - same as initial research
+      const prospectData = {
+        company_name: researchItem.prospect_company_name,
+        website_url: researchItem.prospect_website_url,
+        linkedin_url: researchItem.prospect_linkedin_url,
+        research_type: researchItem.research_type,
+        notes: researchItem.notes || ''
       };
+
+      const webhookPayload = enhanceWebhookPayload(
+        prospectData,
+        companyProfile.data,
+        userProfile.data,
+        researchItem.id
+      );
 
       // Send POST request
       console.log('🚀 Sending webhook to:', webhookUrl);
