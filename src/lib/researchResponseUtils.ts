@@ -20,7 +20,7 @@ export const parseAndSaveN8nResponse = async (
       ? responseData[0].output 
       : responseData.output;
     
-    if (analysisOutput && typeof analysisOutput.fit_score === 'number') {
+    if (analysisOutput && typeof analysisOutput.executive_summary?.fit_score === 'number') {
       // Dynamically capture ALL fields from n8n response except fit_score
       const researchResults = Object.entries(analysisOutput)
         .filter(([key]) => key !== 'fit_score' && key !== 'status')
@@ -35,7 +35,7 @@ export const parseAndSaveN8nResponse = async (
         .update({
           status: 'completed',
           completed_at: new Date().toISOString(),
-          fit_score: analysisOutput.fit_score,
+          fit_score: analysisOutput.executive_summary.fit_score,
           research_results: researchResults as any
         })
         .eq('id', researchId);
@@ -46,7 +46,7 @@ export const parseAndSaveN8nResponse = async (
       
       return { 
         success: true, 
-        fitScore: analysisOutput.fit_score 
+        fitScore: analysisOutput.executive_summary.fit_score 
       };
     } else {
       return { 
