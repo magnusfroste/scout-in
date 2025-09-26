@@ -21,12 +21,24 @@ export const parseAndSaveN8nResponse = async (
       : responseData.output;
     
     if (analysisOutput && typeof analysisOutput.executive_summary?.fit_score === 'number') {
+      // Helper function to safely extract string content from objects
+      const extractStringContent = (value: any): string => {
+        if (typeof value === 'string') return value;
+        if (typeof value === 'object' && value !== null) {
+          // For objects, extract all string values and join them
+          return Object.values(value)
+            .filter(v => typeof v === 'string')
+            .join('\n\n');
+        }
+        return String(value);
+      };
+
       // Dynamically capture ALL fields from n8n response except fit_score
       const researchResults = Object.entries(analysisOutput)
         .filter(([key]) => key !== 'fit_score' && key !== 'status')
         .reduce((acc, [key, value]) => ({
           ...acc,
-          [key]: value || ''
+          [key]: extractStringContent(value)
         }), {});
 
       // Update the research record with parsed analysis
