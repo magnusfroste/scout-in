@@ -6,24 +6,25 @@ import { UserProfileWizard } from './UserProfileWizard';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { enhanceWebhookPayload } from '@/lib/webhookPayloadUtils';
+import { useAuth } from '@/contexts/AuthContext';
 
 type ViewMode = 'dashboard' | 'company-profile' | 'user-profile' | 'research';
-
-// Dummy user ID for POC demo without authentication
-const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
 
 export const LabApp: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewMode>('dashboard');
   const [isLoading, setIsLoading] = useState(false);
   
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleSaveCompanyProfile = async (data: any) => {
     try {
+      if (!user) throw new Error('User not authenticated');
+      
       setIsLoading(true);
       
       const companyPayload = {
-        user_id: DEMO_USER_ID,
+        user_id: user.id,
         is_complete: true,
         company_name: data.company_name ?? data.companyName ?? '',
         website_url: data.website_url ?? data.websiteUrl ?? '',
@@ -79,10 +80,12 @@ export const LabApp: React.FC = () => {
 
   const handleSaveUserProfile = async (data: any) => {
     try {
+      if (!user) throw new Error('User not authenticated');
+      
       setIsLoading(true);
       
       const userPayload = {
-        user_id: DEMO_USER_ID,
+        user_id: user.id,
         is_complete: true,
         full_name: data.full_name ?? data.fullName ?? '',
         linkedin_profile: data.linkedin_profile ?? data.linkedinProfile ?? null,
@@ -131,12 +134,14 @@ export const LabApp: React.FC = () => {
 
   const handleStartResearch = async (data: any) => {
     try {
+      if (!user) throw new Error('User not authenticated');
+      
       setIsLoading(true);
 
       // Get the user's company and user profiles
       const [companyProfile, userProfile] = await Promise.all([
-        supabase.from('lab_company_profiles').select('*').eq('user_id', DEMO_USER_ID).maybeSingle(),
-        supabase.from('lab_user_profiles').select('*').eq('user_id', DEMO_USER_ID).maybeSingle()
+        supabase.from('lab_company_profiles').select('*').eq('user_id', user.id).maybeSingle(),
+        supabase.from('lab_user_profiles').select('*').eq('user_id', user.id).maybeSingle()
       ]);
 
       if (companyProfile.error || userProfile.error) {
@@ -171,7 +176,7 @@ export const LabApp: React.FC = () => {
       const { data: researchRecord, error: insertError } = await supabase
         .from('lab_prospect_research')
         .insert({
-          user_id: DEMO_USER_ID,
+          user_id: user.id,
           company_profile_id: companyProfile.data.id,
           user_profile_id: userProfile.data.id,
           prospect_company_name: data.company_name,  // FIXED: correct field name

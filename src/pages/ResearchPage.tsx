@@ -4,27 +4,48 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { enhanceWebhookPayload } from '@/lib/webhookPayloadUtils';
 import { parseAndSaveN8nResponse } from '@/lib/researchResponseUtils';
-
-const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
+import { useAuth } from '@/contexts/AuthContext';
 
 const ResearchPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleStartResearch = async (data: any) => {
     try {
+      if (!user) {
+        throw new Error('You must be logged in to start research');
+      }
+
+      // Check user credits first
+      const { data: userProfile, error: profileError } = await supabase
+        .from('lab_user_profiles')
+        .select('credits')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (profileError) throw profileError;
+
+      if (!userProfile || userProfile.credits < 1) {
+        toast({
+          title: "Insufficient Credits",
+          description: "You need at least 1 credit to start research. Please contact support to add credits.",
+          variant: "destructive"
+        });
+        return;
+      }
 
       // Get the user's company and user profiles
-      const [companyProfile, userProfile] = await Promise.all([
-        supabase.from('lab_company_profiles').select('*').eq('user_id', DEMO_USER_ID).maybeSingle(),
-        supabase.from('lab_user_profiles').select('*').eq('user_id', DEMO_USER_ID).maybeSingle()
+      const [companyProfile, fullUserProfile] = await Promise.all([
+        supabase.from('lab_company_profiles').select('*').eq('user_id', user.id).maybeSingle(),
+        supabase.from('lab_user_profiles').select('*').eq('user_id', user.id).maybeSingle()
       ]);
 
-      if (companyProfile.error || userProfile.error) {
+      if (companyProfile.error || fullUserProfile.error) {
         throw new Error('Error fetching profiles. Please try again.');
       }
 
-      if (!companyProfile.data || !userProfile.data) {
+      if (!companyProfile.data || !fullUserProfile.data) {
         throw new Error('Missing required profiles. Please complete your company and user profiles first.');
       }
 
@@ -41,9 +62,9 @@ const ResearchPage = () => {
       const { data: researchRecord, error: insertError } = await supabase
         .from('lab_prospect_research')
         .insert({
-          user_id: DEMO_USER_ID,
+          user_id: user.id,
           company_profile_id: companyProfile.data.id,
-          user_profile_id: userProfile.data.id,
+          user_profile_id: fullUserProfile.data.id,
           prospect_company_name: data.company_name,
           prospect_website_url: data.website_url,
           prospect_linkedin_url: data.linkedin_url,
@@ -58,10 +79,34 @@ const ResearchPage = () => {
 
       if (insertError) throw insertError;
 
+      // Deduct credit and log transaction
+      const { error: creditError } = await supabase
+        .from('lab_user_profiles')
+        .update({ credits: userProfile.credits - 1 })
+        .eq('user_id', user.id);
+
+      if (creditError) {
+        console.error('Error updating credits:', creditError);
+      }
+
+      // Log credit transaction
+      const { error: transactionError } = await supabase
+        .from('lab_credit_transactions')
+        .insert({
+          user_id: user.id,
+          amount: -1,
+          description: `Research: ${data.company_name}`,
+          research_id: researchRecord.id
+        });
+
+      if (transactionError) {
+        console.error('Error logging transaction:', transactionError);
+      }
+
       // Show success message and redirect immediately
       toast({
         title: "Research Started!",
-        description: `Research initiated for ${data.company_name}. You can track progress in the dashboard.`,
+        description: `Research initiated for ${data.company_name}. 1 credit deducted. You can track progress in the dashboard.`,
         duration: 5000
       });
 
@@ -72,7 +117,7 @@ const ResearchPage = () => {
       const webhookPayload = enhanceWebhookPayload(
         data,
         companyProfile.data,
-        userProfile.data,
+        fullUserProfile.data,
         researchRecord.id
       );
 

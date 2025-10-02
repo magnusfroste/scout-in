@@ -311,6 +311,41 @@ export type Database = {
         }
         Relationships: []
       }
+      lab_credit_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          research_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description: string
+          id?: string
+          research_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          research_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_credit_transactions_research_id_fkey"
+            columns: ["research_id"]
+            isOneToOne: false
+            referencedRelation: "lab_prospect_research"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lab_prospect_research: {
         Row: {
           company_profile_id: string
@@ -452,6 +487,7 @@ export type Database = {
           communication_style: string
           created_at: string
           credibility_preference: string[]
+          credits: number
           current_location: string | null
           date_of_birth: string | null
           expertise_positioning: string
@@ -479,6 +515,7 @@ export type Database = {
           communication_style: string
           created_at?: string
           credibility_preference?: string[]
+          credits?: number
           current_location?: string | null
           date_of_birth?: string | null
           expertise_positioning: string
@@ -506,6 +543,7 @@ export type Database = {
           communication_style?: string
           created_at?: string
           credibility_preference?: string[]
+          credits?: number
           current_location?: string | null
           date_of_birth?: string | null
           expertise_positioning?: string
@@ -867,7 +905,7 @@ export type Database = {
       }
       l2_normalize: {
         Args: { "": string } | { "": unknown } | { "": unknown }
-        Returns: unknown
+        Returns: string
       }
       match_documents: {
         Args: { filter?: Json; match_count?: number; query_embedding: string }

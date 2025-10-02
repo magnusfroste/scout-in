@@ -13,8 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Building2, Save, Edit, Check, X, Settings } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CompanyProfileWizard } from '@/components/lab/CompanyProfileWizard';
-
-const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CompanyProfile {
   id?: string;
@@ -54,6 +53,7 @@ export function EditableCompanyProfile() {
   const [isSaving, setIsSaving] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     loadProfile();
@@ -61,10 +61,12 @@ export function EditableCompanyProfile() {
 
   const loadProfile = async () => {
     try {
+      if (!user) return;
+
       const { data, error } = await supabase
         .from('lab_company_profiles')
         .select('*')
-        .eq('user_id', DEMO_USER_ID)
+        .eq('user_id', user.id)
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error;
@@ -117,13 +119,13 @@ export function EditableCompanyProfile() {
   };
 
   const saveProfile = async () => {
-    if (!profile) return;
+    if (!profile || !user) return;
 
     try {
       setIsSaving(true);
       
       const profileData = {
-        user_id: DEMO_USER_ID,
+        user_id: user.id,
         ...profile,
         is_complete: !!(profile.company_name && profile.website_url && profile.industry && profile.mission),
         project_scope: profile.project_scope || '',
@@ -178,12 +180,14 @@ export function EditableCompanyProfile() {
   };
 
   const handleWizardSave = async (data: any) => {
+    if (!user) return;
+    
     setProfile({ ...profile, ...data });
     setShowWizard(false);
     
     // Auto-save the profile
     const profileData = {
-      user_id: DEMO_USER_ID,
+      user_id: user.id,
       ...profile,
       ...data,
       is_complete: !!(data.company_name && data.website_url && data.industry && data.mission)

@@ -10,11 +10,10 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { User, Save, Edit, Check, X, Settings } from 'lucide-react';
+import { User, Save, Edit, Check, X, Settings, Coins } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UserProfileWizard } from '@/components/lab/UserProfileWizard';
-
-const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface UserProfile {
   id?: string;
@@ -37,6 +36,15 @@ interface UserProfile {
   meeting_duration: string;
   success_metrics: string[];
   is_complete: boolean;
+  credits?: number;
+}
+
+interface CreditTransaction {
+  id: string;
+  amount: number;
+  description: string;
+  research_id: string | null;
+  created_at: string;
 }
 
 export function EditableUserProfile() {
@@ -45,18 +53,24 @@ export function EditableUserProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
+  const [creditHistory, setCreditHistory] = useState<CreditTransaction[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     loadProfile();
+    loadCreditHistory();
   }, []);
 
   const loadProfile = async () => {
     try {
+      if (!user) return;
+
       const { data, error } = await supabase
         .from('lab_user_profiles')
-        .select('*')
-        .eq('user_id', DEMO_USER_ID)
+        .select('*, credits')
+        .eq('user_id', user.id)
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error;
@@ -84,7 +98,8 @@ export function EditableUserProfile() {
           meeting_format: [],
           meeting_duration: '',
           success_metrics: [],
-          is_complete: false
+          is_complete: false,
+          credits: 5
         });
         setIsEditing(true); // Start in edit mode for new profiles
       }
@@ -100,14 +115,36 @@ export function EditableUserProfile() {
     }
   };
 
+  const loadCreditHistory = async () => {
+    try {
+      if (!user) return;
+      
+      setLoadingHistory(true);
+      const { data, error } = await supabase
+        .from('lab_credit_transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+      
+      setCreditHistory(data || []);
+    } catch (error) {
+      console.error('Error loading credit history:', error);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
   const saveProfile = async () => {
-    if (!profile) return;
+    if (!profile || !user) return;
 
     try {
       setIsSaving(true);
       
       const profileData = {
-        user_id: DEMO_USER_ID,
+        user_id: user.id,
         ...profile,
         is_complete: !!(profile.full_name && profile.role_in_organization && profile.communication_style)
       };
@@ -152,12 +189,14 @@ export function EditableUserProfile() {
   };
 
   const handleWizardSave = async (data: any) => {
+    if (!user) return;
+    
     setProfile({ ...profile, ...data });
     setShowWizard(false);
     
     // Auto-save the profile
     const profileData = {
-      user_id: DEMO_USER_ID,
+      user_id: user.id,
       ...profile,
       ...data,
       is_complete: !!(data.full_name && data.role_in_organization && data.communication_style)
@@ -879,6 +918,59 @@ export function EditableUserProfile() {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Credits Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Coins className="h-5 w-5 text-primary" />
+            Credits & History
+          </CardTitle>
+          <CardDescription>View your current credit balance and usage history</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-4 p-4 bg-primary/5 rounded-lg">
+            <div>
+              <p className="text-sm text-muted-foreground">Available Credits</p>
+              <p className="text-3xl font-bold">{profile.credits || 0}</p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-base font-semibold">Recent Transactions</Label>
+            {loadingHistory ? (
+              <div className="flex items-center justify-center py-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              </div>
+            ) : creditHistory.length > 0 ? (
+              <div className="space-y-2">
+                {creditHistory.map((transaction) => (
+                  <div 
+                    key={transaction.id} 
+                    className="flex items-center justify-between p-3 border rounded-md"
+                  >
+                    <div className="flex-1">
+                      <p className="font-medium">{transaction.description}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(transaction.created_at).toLocaleDateString()} at{' '}
+                        {new Date(transaction.created_at).toLocaleTimeString()}
+                      </p>
+                    </div>
+                    <Badge 
+                      variant={transaction.amount < 0 ? "destructive" : "default"}
+                      className="ml-4"
+                    >
+                      {transaction.amount > 0 ? '+' : ''}{transaction.amount}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground py-4">No credit transactions yet.</p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -18,7 +18,8 @@ import {
   Filter,
   MoreHorizontal,
   RefreshCw,
-  Eye
+  Eye,
+  Coins
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,6 +27,7 @@ import { ResearchResults } from './ResearchResults';
 import { getExportFormat, exportResearchToPDF, exportToJSON } from '@/lib/exportUtils';
 import { parseAndSaveN8nResponse } from '@/lib/researchResponseUtils';
 import { enhanceWebhookPayload } from '@/lib/webhookPayloadUtils';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ResearchItem {
   id: string;
@@ -64,6 +66,7 @@ interface UserProfile {
   id: string;
   full_name: string;
   is_complete: boolean;
+  credits: number;
 }
 
 interface ResearchDashboardProps {
@@ -88,6 +91,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
   const [showOnlyStarred, setShowOnlyStarred] = useState(false);
   
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     loadData();
@@ -109,11 +113,10 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
     };
   }, [research.filter(r => r.status === 'pending').length]); // Only depend on pending count
 
-  // Dummy user ID for POC demo
-  const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
-
   const loadData = async (isPollingUpdate = false) => {
     try {
+      if (!user) return;
+
       if (isPollingUpdate) {
         setIsPolling(true);
       } else {
@@ -124,7 +127,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
       const { data: researchData, error: researchError } = await supabase
         .from('lab_prospect_research')
         .select('*')
-        .eq('user_id', DEMO_USER_ID)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (researchError) throw researchError;
@@ -133,7 +136,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
       const { data: companyData, error: companyError } = await supabase
         .from('lab_company_profiles')
         .select('id, company_name, is_complete')
-        .eq('user_id', DEMO_USER_ID)
+        .eq('user_id', user.id)
         .maybeSingle();
 
       if (companyError) {
@@ -143,8 +146,8 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
       // Load user profile
       const { data: userData, error: userError } = await supabase
         .from('lab_user_profiles')
-        .select('id, full_name, is_complete')
-        .eq('user_id', DEMO_USER_ID)
+        .select('id, full_name, is_complete, credits')
+        .eq('user_id', user.id)
         .maybeSingle();
 
       if (userError) {
@@ -185,10 +188,12 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
 
   const resendWebhook = async (researchItem: ResearchItem) => {
     try {
+      if (!user) return;
+      
       // Get the company and user profiles
       const [companyProfile, userProfile] = await Promise.all([
-        supabase.from('lab_company_profiles').select('*').eq('user_id', DEMO_USER_ID).single(),
-        supabase.from('lab_user_profiles').select('*').eq('user_id', DEMO_USER_ID).single()
+        supabase.from('lab_company_profiles').select('*').eq('user_id', user.id).single(),
+        supabase.from('lab_user_profiles').select('*').eq('user_id', user.id).single()
       ]);
 
       if (companyProfile.error || userProfile.error) {
@@ -410,14 +415,29 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
           </p>
         </div>
         
-        <Button 
-          onClick={onStartResearch}
-          disabled={!canStartResearch}
-          className="flex items-center gap-2"
-        >
-          <Plus className="h-4 w-4" />
-          New Research
-        </Button>
+        <div className="flex items-center gap-3">
+          {userProfile && (
+            <Card className="px-4 py-2">
+              <div className="flex items-center gap-2">
+                <Coins className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Available Credits</p>
+                  <p className="text-xl font-bold">{userProfile.credits}</p>
+                </div>
+              </div>
+            </Card>
+          )}
+          
+          <Button 
+            onClick={onStartResearch}
+            disabled={!canStartResearch || (userProfile?.credits || 0) < 1}
+            size="lg"
+            className="gap-2"
+          >
+            <Plus className="h-5 w-5" />
+            New Research
+          </Button>
+        </div>
       </div>
 
       {/* Setup Cards */}
