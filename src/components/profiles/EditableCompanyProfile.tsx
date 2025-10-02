@@ -363,6 +363,41 @@ export function EditableCompanyProfile() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="linkedin_url">LinkedIn URL</Label>
+              {isEditing ? (
+                <Input
+                  id="linkedin_url"
+                  type="url"
+                  value={profile.linkedin_url || ''}
+                  onChange={(e) => updateField('linkedin_url', e.target.value)}
+                  placeholder="https://linkedin.com/company/your-company"
+                />
+              ) : (
+                <p className="py-2 px-3 border rounded-md bg-muted/30">
+                  {profile.linkedin_url ? (
+                    <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                      {profile.linkedin_url}
+                    </a>
+                  ) : 'Not specified'}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="business_registration">Business Registration</Label>
+              {isEditing ? (
+                <Input
+                  id="business_registration"
+                  value={profile.business_registration || ''}
+                  onChange={(e) => updateField('business_registration', e.target.value)}
+                  placeholder="e.g., LLC, Corporation, Sole Proprietorship"
+                />
+              ) : (
+                <p className="py-2 px-3 border rounded-md bg-muted/30">{profile.business_registration || 'Not specified'}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="industry">Industry *</Label>
               {isEditing ? (
                 <Select value={profile.industry} onValueChange={(value) => updateField('industry', value)}>
@@ -384,6 +419,26 @@ export function EditableCompanyProfile() {
                 </Select>
               ) : (
                 <p className="py-2 px-3 border rounded-md bg-muted/30">{profile.industry || 'Not specified'}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="years_active">Years Active</Label>
+              {isEditing ? (
+                <Select value={profile.years_active || ''} onValueChange={(value) => updateField('years_active', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select years active" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="<1-year">Less than 1 year</SelectItem>
+                    <SelectItem value="1-3-years">1-3 years</SelectItem>
+                    <SelectItem value="4-10-years">4-10 years</SelectItem>
+                    <SelectItem value="11-20-years">11-20 years</SelectItem>
+                    <SelectItem value="20+-years">20+ years</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="py-2 px-3 border rounded-md bg-muted/30">{profile.years_active || 'Not specified'}</p>
               )}
             </div>
 
