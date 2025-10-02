@@ -45,16 +45,17 @@ export const exportResearchToPDF = async (research: any): Promise<void> => {
       return yPosition;
     };
 
-    // Section mapping (same as UI)
+    // Section mapping (aligned with n8n system prompt v4.2 output)
     const getSectionTitle = (key: string) => {
       const sectionTitles: Record<string, string> = {
-        strategic_fit: "Strategic Fit & Relevance",
-        decision_makers: "Organization & Decision Making",
-        technology_profile: "Technology & Innovation Profile",
-        contact_strategy: "Contact Strategy & Recommendations",
-        business_impact: "Business Impact & Financial Intelligence",
-        challenges_position: "Current Challenges & Market Position",
-        change_capacity: "Change Capacity & Digital Maturity"
+        section_1_strategic_fit: "Strategic Fit & Relevance",
+        section_2_organization: "Organization & Decision-Making Structure",
+        section_3_change_capacity: "Change Capacity & Digital Maturity",
+        section_4_challenges_market: "Current Challenges & Market Position",
+        section_5_outreach_strategy: "Personalized Outreach Strategy",
+        section_6_business_impact: "Business Impact & Value Proposition",
+        section_7_message_positioning: "Message Positioning & Alignment",
+        section_8_outreach_messages: "Ready-to-Use Outreach Messages"
       };
       
       return sectionTitles[key] || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
