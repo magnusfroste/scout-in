@@ -136,7 +136,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
 
     // If it's an object, render each markdown field with headings
     if (typeof execSummary === 'object') {
-      const markdownFields = ['overall_assessment', 'key_opportunities', 'risk_factors', 'recommended_approach'];
+      const markdownFields = ['overall_assessment', 'key_opportunities', 'recommended_action'];
       
       return (
         <div className="space-y-4">
