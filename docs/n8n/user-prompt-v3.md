@@ -1,36 +1,31 @@
-# N8N User Prompt v3.0 - GPT-5 Intelligent Brief
+# N8N User Prompt v4.0 - GPT-4.1 Research Brief
 
 ## Enhanced Research Brief with N8N Syntax
 
-This user prompt uses proper N8N `{{ }}` syntax for dynamic content generation, creating an intelligent research brief that guides GPT-5's strategic analysis.
+This user prompt uses proper N8N `{{ }}` syntax for dynamic content generation, creating a focused research brief for GPT-4.1 analysis.
 
 ### N8N User Prompt (Copy/Paste Ready)
 
 ```
-# EXECUTIVE RESEARCH BRIEF - GPT-5 INTELLIGENT ANALYSIS
+# EXECUTIVE RESEARCH BRIEF - GPT-4.1 WASSCHING METHOD ANALYSIS
 
-## TARGET INTELLIGENCE
+## TARGET PROSPECT INTELLIGENCE
 **Company:** {{ $json.body.prospect_data.company_name }}
 **Website:** {{ $json.body.prospect_data.website_url }}
 **Research Type:** {{ $json.body.processing_hints.research_depth }}
 **Priority:** {{ $json.body.processing_hints.priority_level }}
 
-## STRATEGIC CONTEXT
+## RESEARCH CONTEXT
 **Focus Areas:** {{ $json.body.processing_hints.focus_areas }}
 **Communication Style:** {{ $json.body.processing_hints.communication_style }}
-**User Experience:** {{ $json.body.metadata.processing_context.user_experience_level }}
-**Company Maturity:** {{ $json.body.metadata.processing_context.company_maturity }}
+**User Experience Level:** {{ $json.body.metadata.processing_context.user_experience_level }}
+**Company Maturity Stage:** {{ $json.body.metadata.processing_context.company_maturity }}
 
-## GPT-5 INTELLIGENT STRATEGY
-Use the "fill the gaps" methodology for smart tool selection:
-
-1. **Start with Claude** for strategic foundation and synthesis
-2. **Use Gemini** for competitive intelligence and validation  
-3. **Deploy Jina Reader** for targeted website analysis when needed
-4. **Use Search tools** only to fill remaining knowledge gaps
-5. **Use Hunter** when contact discovery is specifically required
-
-**Smart Decision Making:** Don't use all tools automatically - use your GPT-5 intelligence to determine what information you actually need for quality analysis.
+## ANALYSIS STRATEGY (GPT-4.1 with Limited Tools)
+1. **Start with reasoning** - Analyze all payload data thoroughly first
+2. **Use Jina Reader** if website facts are missing (call with {{ $json.body.prospect_data.website_url }})
+3. **Use Hunter** if contact discovery is needed for outreach strategy
+4. **Focus on quality** - Deliver actionable insights with GPT-4.1's analytical capabilities
 
 ## COMPANY PROFILE CONTEXT
 **Industry:** {{ $json.body.company_profile.industry }}
@@ -52,15 +47,15 @@ Use the "fill the gaps" methodology for smart tool selection:
 {{ JSON.stringify($json.body, null, 2) }}
 
 ## ANALYSIS DIRECTIVE
-Using GPT-5 intelligent tool orchestration, conduct Enhanced Wassching Method analysis. Deploy tools strategically based on actual information needs - prioritize quality insights over exhaustive data collection. Deliver actionable business intelligence with quantified impact assessments.
+Using GPT-4.1 direct reasoning and targeted tool usage (Jina + Hunter), conduct Enhanced Wassching Method analysis across all 7 sections. Deploy tools only when information gaps exist. Deliver actionable business intelligence with quantified impact assessments and implementation-ready recommendations.
 ```
 
 ### Key Features
 
-#### **GPT-5 Intelligent Approach**
-- **Smart Tool Selection**: Guides AI to use reasoning for tool deployment
-- **Quality Focus**: Emphasizes actionable insights over data volume
-- **Strategic Guidance**: "Fill the gaps" methodology prevents tool overuse
+#### **GPT-4.1 Direct Reasoning Approach**
+- **Simplified Tool Strategy**: Only Jina Reader (website) and Hunter (contacts)
+- **Quality Focus**: Emphasizes actionable insights with targeted data gathering
+- **No Complex Orchestration**: Avoids GPT-5 timeout issues in N8N
 
 #### **Proper N8N Syntax**
 - **Simple Variables**: `{{ $json.body.field }}` instead of complex JavaScript
@@ -68,9 +63,9 @@ Using GPT-5 intelligent tool orchestration, conduct Enhanced Wassching Method an
 - **No Functions**: Eliminates complex helper function dependencies
 
 #### **Token Optimization**
-- **Reduced Complexity**: ~300 tokens vs 1,000+ in v2.0
-- **Essential Context**: Provides key information without verbose instructions
-- **Efficient Structure**: Clean, focused research brief format
+- **Reduced Complexity**: ~450 tokens (minimal tool orchestration)
+- **Essential Context**: All payload data mapped without redundant instructions
+- **Efficient Structure**: Clean research brief focused on WHAT to analyze
 
 #### **Strategic Intelligence**
 - **Context-Aware**: Company and user profile integration
@@ -80,22 +75,23 @@ Using GPT-5 intelligent tool orchestration, conduct Enhanced Wassching Method an
 ### Implementation Benefits
 
 **Performance Improvements:**
-- **65% faster execution**: GPT-5 decides when sufficient data is gathered
-- **80% token reduction**: Eliminates verbose orchestration instructions
-- **Smart resource usage**: No more unnecessary 1MB data dumps
+- **Stable execution**: Avoids GPT-5 timeout issues with tool calling in N8N
+- **Simplified workflow**: Only 2 tools (Jina + Hunter) reduce complexity
+- **Focused resource usage**: Targeted data gathering with GPT-4.1 reasoning
 
 **Quality Enhancements:**
-- **Strategic focus**: Maintains analysis quality with efficient tool usage
-- **Intelligent automation**: Leverages GPT-5 reasoning capabilities
-- **Actionable output**: Emphasizes implementation-ready insights
+- **Direct analysis**: GPT-4.1 analytical capabilities for strategic insights
+- **Reliable automation**: Proven stable workflow with limited tools
+- **Actionable output**: Full 7-section Wassching Method maintained
 
 ### Usage Instructions
 
 1. **Copy the user prompt** from the code block above
 2. **Set N8N variable**: Use `Set` node with `user_prompt` variable
-3. **Connect to AI node**: Pass `user_prompt` to your GPT-5 AI node
-4. **System prompt**: Use System Prompt v3.0 for optimal results
+3. **Connect to AI node**: Pass `user_prompt` to your GPT-4.1 AI node
+4. **System prompt**: Use System Prompt v4.0 for optimal results
+5. **Enable tools**: Jina Reader and Hunter in N8N AI node configuration
 
 ---
 
-**Version**: 3.0 | **Compatibility**: GPT-5, Claude 4 | **Syntax**: Pure N8N {{ }} | **Focus**: Intelligent Efficiency
+**Version**: 4.0 | **Compatibility**: GPT-4.1 | **Tools**: Jina + Hunter | **Syntax**: Pure N8N {{ }} | **Focus**: Stable & Actionable
