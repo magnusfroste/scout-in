@@ -2,7 +2,6 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export type ExportFormat = "pdf" | "json";
-export type ResearchDisplayStyle = "compact" | "detailed" | "spacious";
 
 // User preferences
 export const getExportFormat = (): ExportFormat => {
@@ -12,41 +11,6 @@ export const getExportFormat = (): ExportFormat => {
 
 export const setExportFormat = (format: ExportFormat): void => {
   localStorage.setItem('exportFormat', format);
-};
-
-export const getResearchDisplayStyle = (): ResearchDisplayStyle => {
-  const saved = localStorage.getItem('researchDisplayStyle');
-  if (saved) {
-    return saved as ResearchDisplayStyle;
-  }
-  
-  // Migration: check old settings and convert
-  const oldDisplayMode = localStorage.getItem('insightsDisplayMode');
-  const oldAccordionExpansion = localStorage.getItem('accordionExpanded');
-  
-  if (oldDisplayMode === 'cards') {
-    const newStyle = 'spacious';
-    localStorage.setItem('researchDisplayStyle', newStyle);
-    // Clean up old keys
-    localStorage.removeItem('insightsDisplayMode');
-    localStorage.removeItem('accordionExpanded');
-    return newStyle;
-  }
-  
-  if (oldDisplayMode === 'accordion') {
-    const newStyle = oldAccordionExpansion === 'expanded' ? 'detailed' : 'compact';
-    localStorage.setItem('researchDisplayStyle', newStyle);
-    // Clean up old keys
-    localStorage.removeItem('insightsDisplayMode');
-    localStorage.removeItem('accordionExpanded');
-    return newStyle;
-  }
-  
-  return 'compact'; // default
-};
-
-export const setResearchDisplayStyle = (style: ResearchDisplayStyle): void => {
-  localStorage.setItem('researchDisplayStyle', style);
 };
 
 // PDF Export utility for research results

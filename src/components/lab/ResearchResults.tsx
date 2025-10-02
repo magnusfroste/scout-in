@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Copy, Download, Users, Target, MessageSquare, TrendingUp, Cpu, AlertTriangle, Settings, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { exportResearchToPDF, exportToJSON, getExportFormat, getResearchDisplayStyle } from "@/lib/exportUtils";
+import { exportResearchToPDF, exportToJSON, getExportFormat } from "@/lib/exportUtils";
 
 interface ResearchItem {
   id: string;
@@ -43,7 +43,6 @@ interface ResearchResultsProps {
 export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) => {
   const { toast } = useToast();
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
-  const displayStyle = getResearchDisplayStyle();
 
   if (!research.research_results || research.status !== 'completed') {
     return (
@@ -185,101 +184,6 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
     </ReactMarkdown>
   );
 
-  const renderAccordion = (data: any, prefix: string) => {
-    const isExpanded = displayStyle === 'detailed';
-    const defaultValues = isExpanded ? Object.keys(data).map((_, index) => `${prefix}-${index}`) : undefined;
-
-    if (isExpanded) {
-      return (
-        <Accordion type="multiple" defaultValue={defaultValues}>
-          {Object.entries(data).map(([key, value], index) => (
-            <AccordionItem key={index} value={`${prefix}-${index}`}>
-              <AccordionTrigger className="text-left">
-                {key.replace(/_/g, ' ')}
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    {renderMarkdownContent(formatSectionContent(value))}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => copyToClipboard(formatSectionContent(value), key)}
-                    className={copiedSection === key ? "text-green-600" : ""}
-                  >
-                    <Copy className="w-4 h-4" />
-                  </Button>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      );
-    }
-
-    return (
-      <Accordion type="single" collapsible>
-        {Object.entries(data).map(([key, value], index) => (
-          <AccordionItem key={index} value={`${prefix}-${index}`}>
-            <AccordionTrigger className="text-left">
-              {key.replace(/_/g, ' ')}
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  {renderMarkdownContent(formatSectionContent(value))}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(formatSectionContent(value), key)}
-                  className={copiedSection === key ? "text-green-600" : ""}
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-    );
-  };
-
-  const renderAsCards = (data: any, prefix: string) => {
-    return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-        {Object.entries(data).map(([key, value], index) => (
-          <Card key={index} className="h-fit">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-medium">
-                  {key.replace(/_/g, ' ')}
-                </CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(formatSectionContent(value), key)}
-                  className={copiedSection === key ? "text-green-600" : ""}
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-sm leading-relaxed">
-                {renderMarkdownContent(formatSectionContent(value))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  };
-
-  const renderContent = (data: any, prefix: string) => {
-    return displayStyle === 'spacious' ? renderAsCards(data, prefix) : renderAccordion(data, prefix);
-  };
 
   // Section mapping for icons and titles
   const getSectionConfig = (key: string) => {
