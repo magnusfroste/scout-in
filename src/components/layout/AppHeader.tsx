@@ -1,6 +1,6 @@
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { Search, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
@@ -44,10 +44,6 @@ export function AppHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="hidden md:flex">
-            <Search className="h-4 w-4 mr-2" />
-            Quick Search
-          </Button>
           <ThemeToggle />
           
           {user && (
