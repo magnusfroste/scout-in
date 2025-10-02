@@ -171,7 +171,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
   };
 
   const renderMarkdownContent = (content: string) => (
-    <div className="prose prose-sm dark:prose-invert max-w-none prose-table:text-sm prose-table:border-collapse">
+    <div className="prose prose-sm dark:prose-invert max-w-none prose-table:text-sm prose-table:border-collapse prose-th:py-3 prose-th:px-4 prose-td:py-3 prose-td:px-4">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>
         {content}
       </ReactMarkdown>
