@@ -54,8 +54,8 @@ serve(async (req) => {
         },
       ],
       mode: 'payment',
-      success_url: `https://pqskutdrekcinpymvigm.supabase.co/user-profile?success=true`,
-      cancel_url: `https://pqskutdrekcinpymvigm.supabase.co/user-profile`,
+      success_url: `https://research.labs1100.com/user-profile?success=true`,
+      cancel_url: `https://research.labs1100.com/user-profile`,
       metadata: {
         user_id: userId,
         credits: credits.toString(),
