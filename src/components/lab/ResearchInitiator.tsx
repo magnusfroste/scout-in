@@ -5,9 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, Search, Zap, ArrowRight, Building2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 interface ProspectData {
   company_name: string;
@@ -35,34 +38,52 @@ export const ResearchInitiator: React.FC<ResearchInitiatorProps> = ({
   });
   
   const [validation, setValidation] = useState<{[key: string]: string}>({});
-  const [companyProfile, setCompanyProfile] = useState(null);
-  const [userProfile, setUserProfile] = useState(null);
+  const [companyProfile, setCompanyProfile] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [profilesLoading, setProfilesLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     checkProfiles();
-  }, []);
+  }, [user?.id]);
 
   const checkProfiles = async () => {
     try {
-      // Check company profile
-      const { data: companyData } = await supabase
-        .from('lab_company_profiles')
-        .select('*')
-        .single();
+      if (!user) {
+        setProfilesLoading(false);
+        return;
+      }
 
-      // Check user profile
-      const { data: userData } = await supabase
-        .from('lab_user_profiles')
-        .select('*')
-        .single();
+      const [companyRes, userRes] = await Promise.all([
+        supabase
+          .from('lab_company_profiles')
+          .select('id, user_id, company_name, is_complete')
+          .eq('user_id', user.id)
+          .maybeSingle(),
+        supabase
+          .from('lab_user_profiles')
+          .select('id, user_id, full_name, is_complete, credits')
+          .eq('user_id', user.id)
+          .maybeSingle()
+      ]);
 
-      setCompanyProfile(companyData);
-      setUserProfile(userData);
+      if (companyRes.error) {
+        console.error('Error fetching company profile:', companyRes.error);
+      }
+      if (userRes.error) {
+        console.error('Error fetching user profile:', userRes.error);
+      }
+
+      setCompanyProfile(companyRes.data ?? null);
+      setUserProfile(userRes.data ?? null);
     } catch (error) {
       console.error('Error checking profiles:', error);
+    } finally {
+      setProfilesLoading(false);
     }
   };
 
@@ -138,9 +159,36 @@ export const ResearchInitiator: React.FC<ResearchInitiatorProps> = ({
     }
   };
 
-  const canSubmit = companyProfile && userProfile;
+  if (profilesLoading) {
+    return (
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-96 mt-2" />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-10 w-32" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const canSubmit = Boolean(companyProfile?.is_complete && userProfile?.is_complete);
 
   if (!canSubmit) {
+    const companyIssue = !companyProfile 
+      ? { message: 'Company Profile Missing', action: 'Create your company profile to continue' }
+      : !companyProfile.is_complete 
+        ? { message: 'Company Profile Incomplete', action: 'Complete your company profile to continue' }
+        : null;
+
+    const userIssue = !userProfile
+      ? { message: 'User Profile Missing', action: 'Create your user profile to continue' }
+      : !userProfile.is_complete
+        ? { message: 'User Profile Incomplete', action: 'Complete your user profile to continue' }
+        : null;
+
     return (
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
@@ -149,16 +197,40 @@ export const ResearchInitiator: React.FC<ResearchInitiatorProps> = ({
             Setup Required
           </CardTitle>
           <CardDescription>
-            You need to complete your profiles before starting research
+            Complete your profiles before starting research
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-            <h4 className="font-medium text-orange-800 mb-2">Missing Profiles:</h4>
-            <ul className="list-disc list-inside space-y-1 text-orange-700">
-              {!companyProfile && <li>Company Profile - Configure your organization details</li>}
-              {!userProfile && <li>User Profile - Set up your personal research preferences</li>}
-            </ul>
+            <h4 className="font-medium text-orange-800 mb-3">Profile Issues:</h4>
+            <div className="space-y-3">
+              {companyIssue && (
+                <div className="space-y-2">
+                  <p className="text-orange-700 font-medium">{companyIssue.message}</p>
+                  <p className="text-sm text-orange-600">{companyIssue.action}</p>
+                  <Button 
+                    size="sm" 
+                    onClick={() => navigate('/company-profile')}
+                    className="mt-1"
+                  >
+                    Go to Company Profile
+                  </Button>
+                </div>
+              )}
+              {userIssue && (
+                <div className="space-y-2">
+                  <p className="text-orange-700 font-medium">{userIssue.message}</p>
+                  <p className="text-sm text-orange-600">{userIssue.action}</p>
+                  <Button 
+                    size="sm" 
+                    onClick={() => navigate('/user-profile')}
+                    className="mt-1"
+                  >
+                    Go to User Profile
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
           
           <div className="flex gap-2">
