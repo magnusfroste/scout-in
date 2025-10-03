@@ -40,7 +40,7 @@ serve(async (req) => {
     // Verify the webhook signature
     let event: Stripe.Event;
     try {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
     } catch (err) {
       console.error('Webhook signature verification failed:', err.message);
       return new Response(
@@ -49,7 +49,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Received event: ${event.type}`);
+    console.log(`Received event: ${event.type} (${event.id})`);
 
     // Handle the checkout.session.completed event
     if (event.type === 'checkout.session.completed') {
