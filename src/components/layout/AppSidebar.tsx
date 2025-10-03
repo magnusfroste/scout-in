@@ -60,5 +60,14 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      {/* Version footer - only visible when expanded */}
+      {!collapsed && (
+        <div className="mt-auto p-4 border-t border-sidebar-border">
+          <p className="text-[10px] text-sidebar-foreground/40 font-mono">
+            v: {import.meta.env.VITE_VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'dev'}
+          </p>
+        </div>
+      )}
     </Sidebar>;
 }
