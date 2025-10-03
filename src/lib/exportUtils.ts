@@ -64,10 +64,12 @@ export const exportResearchToPDF = async (research: any): Promise<void> => {
     // Clean markdown text for PDF
     const cleanMarkdownText = (text: string) => {
       return text
+        .replace(/#{1,6}\s+/g, '') // Remove heading markdown symbols
         .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
         .replace(/\*(.*?)\*/g, '$1') // Remove italic markdown
-        .replace(/#{1,6}\s/g, '') // Remove headers
-        .replace(/\n\s*\n/g, '\n\n') // Normalize line breaks
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Remove markdown links, keep text
+        .replace(/`([^`]+)`/g, '$1') // Remove inline code formatting
+        .replace(/\n\s*\n\s*\n/g, '\n\n') // Normalize multiple line breaks
         .trim();
     };
 
@@ -124,10 +126,10 @@ export const exportResearchToPDF = async (research: any): Promise<void> => {
       }
     }
 
-    // Dynamic sections (all fields except executive_summary)
+    // Dynamic sections (all fields except executive_summary and metadata)
     if (research.research_results && typeof research.research_results === 'object') {
       const sections = Object.entries(research.research_results)
-        .filter(([key]) => key !== 'executive_summary');
+        .filter(([key]) => key !== 'executive_summary' && key !== 'metadata');
 
       sections.forEach(([key, value]) => {
         const formatted = formatContentForPDF(value);
