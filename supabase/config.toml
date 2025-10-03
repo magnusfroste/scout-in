@@ -1,1 +1,7 @@
 project_id = "pqskutdrekcinpymvigm"
+
+[functions.lab-create-checkout-session]
+verify_jwt = true
+
+[functions.lab-stripe-webhook]
+verify_jwt = false

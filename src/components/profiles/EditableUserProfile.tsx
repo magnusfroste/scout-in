@@ -14,6 +14,8 @@ import { User, Save, Edit, Check, X, Settings, Coins } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UserProfileWizard } from '@/components/lab/UserProfileWizard';
 import { useAuth } from '@/contexts/AuthContext';
+import { CreditPurchaseDialog } from '@/components/lab/CreditPurchaseDialog';
+import { useSearchParams } from 'react-router-dom';
 
 interface UserProfile {
   id?: string;
@@ -57,13 +59,26 @@ export function EditableUserProfile() {
   const [showWizard, setShowWizard] = useState(false);
   const [creditHistory, setCreditHistory] = useState<CreditTransaction[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [showCreditPurchase, setShowCreditPurchase] = useState(false);
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { user } = useAuth();
 
   useEffect(() => {
     loadProfile();
     loadCreditHistory();
-  }, []);
+    
+    // Check for successful purchase
+    if (searchParams.get('success') === 'true') {
+      toast({
+        title: "Purchase Successful!",
+        description: "Your credits have been added to your account.",
+        duration: 5000,
+      });
+      // Remove the success parameter from URL
+      window.history.replaceState({}, '', '/user-profile');
+    }
+  }, [searchParams]);
 
   const loadProfile = async () => {
     try {
@@ -960,10 +975,18 @@ export function EditableUserProfile() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4 p-4 bg-primary/5 rounded-lg">
-            <div>
+            <div className="flex-1">
               <p className="text-sm text-muted-foreground">Available Credits</p>
               <p className="text-3xl font-bold">{profile.credits || 0}</p>
             </div>
+            <Button
+              onClick={() => setShowCreditPurchase(true)}
+              variant="default"
+              className="gap-2"
+            >
+              <Coins className="h-4 w-4" />
+              Buy Credits
+            </Button>
           </div>
 
           <div className="space-y-2">
@@ -1001,6 +1024,13 @@ export function EditableUserProfile() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Credit Purchase Dialog */}
+      <CreditPurchaseDialog
+        open={showCreditPurchase}
+        onOpenChange={setShowCreditPurchase}
+        currentCredits={profile?.credits || 0}
+      />
     </div>
   );
 }

@@ -29,8 +29,16 @@ const ResearchPage = () => {
       if (!userProfile || userProfile.credits < 1) {
         toast({
           title: "Insufficient Credits",
-          description: "You need at least 1 credit to start research. Please contact support to add credits.",
-          variant: "destructive"
+          description: "You need at least 1 credit to start research.",
+          variant: "destructive",
+          action: (
+            <button
+              onClick={() => navigate('/user-profile')}
+              className="px-3 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Buy Credits
+            </button>
+          ),
         });
         return;
       }

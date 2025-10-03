@@ -28,6 +28,7 @@ import { getExportFormat, exportResearchToPDF, exportToJSON } from '@/lib/export
 import { parseAndSaveN8nResponse } from '@/lib/researchResponseUtils';
 import { enhanceWebhookPayload } from '@/lib/webhookPayloadUtils';
 import { useAuth } from '@/contexts/AuthContext';
+import { CreditPurchaseDialog } from './CreditPurchaseDialog';
 
 interface ResearchItem {
   id: string;
@@ -89,6 +90,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedResearch, setSelectedResearch] = useState<ResearchItem | null>(null);
   const [showOnlyStarred, setShowOnlyStarred] = useState(false);
+  const [showCreditPurchase, setShowCreditPurchase] = useState(false);
   
   const { toast } = useToast();
   const { user } = useAuth();
@@ -424,6 +426,15 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
                   <p className="text-sm text-muted-foreground">Available Credits</p>
                   <p className="text-xl font-bold">{userProfile.credits}</p>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowCreditPurchase(true)}
+                  className="ml-2"
+                  title="Buy more credits"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
               </div>
             </Card>
           )}
@@ -785,6 +796,13 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
           </div>
         </div>
       )}
+
+      {/* Credit Purchase Dialog */}
+      <CreditPurchaseDialog
+        open={showCreditPurchase}
+        onOpenChange={setShowCreditPurchase}
+        currentCredits={userProfile?.credits || 0}
+      />
     </div>
   );
 };
