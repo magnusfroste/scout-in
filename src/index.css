@@ -11,7 +11,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* James 1100 Light Theme */
+    /* Scout-In Light Theme */
     --background: 0 0% 96%;
     --foreground: 0 0% 9%;
 
@@ -42,10 +42,10 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
-    /* James 1100 Brand Colors */
-    --james-orange: 20 100% 59%;
-    --james-deep-blue: 225 100% 15%;
-    --james-light-blue: 220 90% 56%;
+    /* Scout-In Brand Colors */
+    --scout-orange: 20 100% 59%;
+    --scout-deep-blue: 225 100% 15%;
+    --scout-light-blue: 220 90% 56%;
 
     /* Gradients inspired by branding */
     --gradient-primary: linear-gradient(135deg, hsl(225 100% 15%) 0%, hsl(220 90% 56%) 100%);
@@ -126,10 +126,10 @@ All colors MUST be HSL.
     --input: 0 0% 32%;
     --ring: 27 95% 60%;
 
-    /* James 1100 Dark Brand Colors - Refined */
-    --james-orange: 20 95% 55%;
-    --james-deep-blue: 210 25% 12%;
-    --james-light-blue: 210 30% 45%;
+    /* Scout-In Dark Brand Colors - Refined */
+    --scout-orange: 20 95% 55%;
+    --scout-deep-blue: 210 25% 12%;
+    --scout-light-blue: 210 30% 45%;
 
     /* Apple-inspired dark gradients */
     --gradient-primary: linear-gradient(135deg, hsl(210 25% 12%) 0%, hsl(20 95% 55%) 100%);

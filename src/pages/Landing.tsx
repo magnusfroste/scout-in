@@ -19,8 +19,8 @@ const Landing = () => {
       {/* Header */}
       <header className="border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-[hsl(var(--james-orange))] bg-clip-text text-transparent">
-            James Research
+          <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-[hsl(var(--scout-orange))] bg-clip-text text-transparent">
+            Scout-In
           </h1>
           <div className="flex gap-2">
             <Button variant="ghost" onClick={() => navigate('/auth')}>
@@ -39,7 +39,7 @@ const Landing = () => {
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
             Actionable insights in less time
             <br />
-            <span className="bg-gradient-to-r from-primary to-[hsl(var(--james-orange))] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary to-[hsl(var(--scout-orange))] bg-clip-text text-transparent">
               with focus on what matters
             </span>
           </h2>
@@ -95,7 +95,7 @@ const Landing = () => {
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-20">
-        <div className="max-w-3xl mx-auto text-center space-y-6 bg-gradient-to-br from-primary/5 to-[hsl(var(--james-orange))]/5 rounded-2xl p-12 border border-border">
+        <div className="max-w-3xl mx-auto text-center space-y-6 bg-gradient-to-br from-primary/5 to-[hsl(var(--scout-orange))]/5 rounded-2xl p-12 border border-border">
           <h3 className="text-3xl font-bold">Ready to transform your research?</h3>
           <p className="text-muted-foreground">
             Join professionals who are saving hours on research and closing more deals.
@@ -110,7 +110,7 @@ const Landing = () => {
       {/* Footer */}
       <footer className="border-t border-border mt-20">
         <div className="container mx-auto px-4 py-8 text-center text-sm text-muted-foreground">
-          <p>© 2025 James Research. All rights reserved.</p>
+          <p>© 2025 Scout-In. All rights reserved.</p>
         </div>
       </footer>
     </div>

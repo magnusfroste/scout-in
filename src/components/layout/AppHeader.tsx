@@ -33,8 +33,8 @@ export function AppHeader() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="hidden sm:block">
-              <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-[hsl(var(--james-orange))] bg-clip-text text-transparent">
-                James Research
+            <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-[hsl(var(--scout-orange))] bg-clip-text text-transparent">
+                Scout-In
               </h1>
               <p className="text-xs text-muted-foreground -mt-1">
                 Actionable insights in less time with focus on what matters! 
