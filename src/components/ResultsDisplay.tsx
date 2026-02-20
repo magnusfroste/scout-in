@@ -137,17 +137,17 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, isEvalu
             key={result.id} 
             className={`p-4 border transition-all duration-200 ${
               result.success 
-                ? 'border-green-500/20 bg-green-500/5' 
-                : 'border-red-500/20 bg-red-500/5'
+                ? 'border-accent-foreground/20 bg-accent/30' 
+                : 'border-destructive/20 bg-destructive/5'
             }`}
           >
             {/* Result header */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 {result.success ? (
-                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <CheckCircle className="w-4 h-4 text-accent-foreground" />
                 ) : (
-                  <XCircle className="w-4 h-4 text-red-500" />
+                  <XCircle className="w-4 h-4 text-destructive" />
                 )}
                 <Badge variant={result.success ? "default" : "destructive"}>
                   {result.success ? 'Success' : 'Failed'}
@@ -212,7 +212,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, isEvalu
 
             {/* Error message if failed */}
             {!result.success && result.error && (
-              <div className="text-sm text-red-400 bg-red-500/10 p-2 rounded mb-3">
+              <div className="text-sm text-destructive bg-destructive/10 p-2 rounded mb-3">
                 {result.error}
               </div>
             )}

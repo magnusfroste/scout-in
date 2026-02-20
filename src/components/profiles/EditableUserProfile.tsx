@@ -332,7 +332,7 @@ export function EditableUserProfile() {
             </div>
           </div>
           {profile.is_complete && (
-            <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+            <Badge variant="secondary" className="bg-accent text-accent-foreground">
               <Check className="h-3 w-3 mr-1" />
               Complete
             </Badge>

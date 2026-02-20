@@ -73,6 +73,11 @@ export default {
     				DEFAULT: 'hsl(var(--card))',
     				foreground: 'hsl(var(--card-foreground))'
     			},
+    			scout: {
+    				orange: 'hsl(var(--scout-orange))',
+    				'deep-blue': 'hsl(var(--scout-deep-blue))',
+    				'light-blue': 'hsl(var(--scout-light-blue))'
+    			},
     			sidebar: {
     				DEFAULT: 'hsl(var(--sidebar-background))',
     				foreground: 'hsl(var(--sidebar-foreground))',
