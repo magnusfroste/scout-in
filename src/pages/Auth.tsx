@@ -107,8 +107,8 @@ const Auth = () => {
         <Card>
           <CardHeader className="space-y-1 text-center">
             <CardTitle className="text-2xl font-bold">
-              <span className="bg-gradient-to-r from-primary to-[hsl(var(--james-orange))] bg-clip-text text-transparent">
-                James Research
+              <span className="bg-gradient-to-r from-primary to-[hsl(var(--scout-orange))] bg-clip-text text-transparent">
+                Scout-In
               </span>
             </CardTitle>
             <CardDescription>
@@ -168,20 +168,6 @@ const Auth = () => {
                     </div>
                   </div>
 
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      setSignInData({
-                        email: 'james@wassching.com',
-                        password: '123456'
-                      });
-                    }}
-                    disabled={isLoading}
-                  >
-                    Use Demo Credentials
-                  </Button>
                 </form>
               </TabsContent>
 
