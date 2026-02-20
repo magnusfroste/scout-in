@@ -14,6 +14,7 @@ import CompanyProfilePage from "./pages/CompanyProfilePage";
 import UserProfilePage from "./pages/UserProfilePage";
 import ResearchPage from "./pages/ResearchPage";
 import SettingsPage from "./pages/SettingsPage";
+import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
                   <Route path="/user-profile" element={<UserProfilePage />} />
                   <Route path="/research" element={<ResearchPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/admin" element={<AdminPage />} />
                   <Route path="/history" element={<Index />} />
                 </Route>
               </Route>
