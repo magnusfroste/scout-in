@@ -1,7 +1,9 @@
-import { Building2, User, BarChart3, Settings, Search } from "lucide-react";
+import { Building2, User, BarChart3, Settings, Search, Shield } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { useAdminCheck } from "@/hooks/useAdminCheck";
+
 const items = [{
   title: "Dashboard",
   url: "/",
@@ -28,6 +30,7 @@ export function AppSidebar() {
     state
   } = useSidebar();
   const location = useLocation();
+  const { isAdmin } = useAdminCheck();
   const currentPath = location.pathname;
   const collapsed = state === "collapsed";
   const isActive = (path: string) => {
@@ -56,6 +59,16 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                   </SidebarMenuItem>;
             })}
+              {isAdmin && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <NavLink to="/admin" className={getNavCls(isActive("/admin"))}>
+                      <Shield className={cn("h-4 w-4 transition-colors", isActive("/admin") ? "text-primary" : "text-sidebar-foreground/70")} />
+                      {!collapsed && <span className="text-sm font-medium">Admin</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
