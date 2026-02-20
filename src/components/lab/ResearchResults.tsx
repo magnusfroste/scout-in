@@ -23,9 +23,6 @@ interface ResearchItem {
   notes?: string;
   fit_score: number | null;
   research_results: any;
-  decision_makers: any;
-  contact_strategy: any;
-  value_proposition: any;
   started_at?: string;
   completed_at: string | null;
   is_starred?: boolean;
