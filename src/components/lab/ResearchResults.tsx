@@ -112,9 +112,9 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
   };
 
   const getFitScoreColor = (score: number) => {
-    if (score >= 80) return "bg-green-500";
-    if (score >= 60) return "bg-yellow-500";
-    return "bg-red-500";
+    if (score >= 80) return "bg-accent-foreground";
+    if (score >= 60) return "bg-scout-orange";
+    return "bg-destructive";
   };
 
   // Handle both string and object formats for content
@@ -151,7 +151,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
                     variant="ghost"
                     size="sm"
                     onClick={() => copyToClipboard(content, field)}
-                    className={copiedSection === field ? "text-green-600" : ""}
+                    className={copiedSection === field ? "text-accent-foreground" : ""}
                   >
                     <Copy className="w-4 h-4" />
                   </Button>
@@ -216,7 +216,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
               <CardDescription>Research Analysis Complete</CardDescription>
             </div>
             <div className="text-center">
-              <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full text-white font-bold text-xl ${getFitScoreColor(fitScore)}`}>
+              <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full text-primary-foreground font-bold text-xl ${getFitScoreColor(fitScore)}`}>
                 {fitScore}
               </div>
               <p className="text-sm text-muted-foreground mt-1">Fit Score</p>
@@ -265,7 +265,7 @@ export const ResearchResults: React.FC<ResearchResultsProps> = ({ research }) =>
                   variant="ghost"
                   size="sm"
                   onClick={() => copyToClipboard(formatSectionContent(value), config.title)}
-                  className={`mt-2 ${copiedSection === config.title ? "text-green-600" : ""}`}
+                  className={`mt-2 ${copiedSection === config.title ? "text-accent-foreground" : ""}`}
                 >
                   <Copy className="w-4 h-4 mr-2" />
                   Copy

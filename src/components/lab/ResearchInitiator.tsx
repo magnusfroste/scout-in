@@ -192,7 +192,7 @@ export const ResearchInitiator: React.FC<ResearchInitiatorProps> = ({
     return (
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-orange-600">
+          <CardTitle className="flex items-center gap-2 text-scout-orange">
             <AlertCircle className="h-5 w-5" />
             Setup Required
           </CardTitle>
@@ -201,13 +201,13 @@ export const ResearchInitiator: React.FC<ResearchInitiatorProps> = ({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-            <h4 className="font-medium text-orange-800 mb-3">Profile Issues:</h4>
-            <div className="space-y-3">
-              {companyIssue && (
-                <div className="space-y-2">
-                  <p className="text-orange-700 font-medium">{companyIssue.message}</p>
-                  <p className="text-sm text-orange-600">{companyIssue.action}</p>
+            <div className="bg-scout-orange/10 border border-scout-orange/20 rounded-lg p-4">
+              <h4 className="font-medium text-scout-orange mb-3">Profile Issues:</h4>
+              <div className="space-y-3">
+                {companyIssue && (
+                  <div className="space-y-2">
+                    <p className="text-scout-orange font-medium">{companyIssue.message}</p>
+                    <p className="text-sm text-scout-orange/80">{companyIssue.action}</p>
                   <Button 
                     size="sm" 
                     onClick={() => navigate('/company-profile')}
@@ -219,8 +219,8 @@ export const ResearchInitiator: React.FC<ResearchInitiatorProps> = ({
               )}
               {userIssue && (
                 <div className="space-y-2">
-                  <p className="text-orange-700 font-medium">{userIssue.message}</p>
-                  <p className="text-sm text-orange-600">{userIssue.action}</p>
+                  <p className="text-scout-orange font-medium">{userIssue.message}</p>
+                    <p className="text-sm text-scout-orange/80">{userIssue.action}</p>
                   <Button 
                     size="sm" 
                     onClick={() => navigate('/user-profile')}
@@ -267,10 +267,10 @@ export const ResearchInitiator: React.FC<ResearchInitiatorProps> = ({
                 value={formData.company_name}
                 onChange={(e) => updateField('company_name', e.target.value)}
                 placeholder="Enter the prospect company name"
-                className={validation.company_name ? 'border-red-500' : ''}
+                className={validation.company_name ? 'border-destructive' : ''}
               />
               {validation.company_name && (
-                <p className="text-sm text-red-600 mt-1">{validation.company_name}</p>
+                <p className="text-sm text-destructive mt-1">{validation.company_name}</p>
               )}
             </div>
 
@@ -283,10 +283,10 @@ export const ResearchInitiator: React.FC<ResearchInitiatorProps> = ({
                 value={formData.website_url}
                 onChange={(e) => updateField('website_url', e.target.value)}
                 placeholder="company-website.com or https://company-website.com"
-                className={validation.website_url ? 'border-red-500' : ''}
+                className={validation.website_url ? 'border-destructive' : ''}
               />
               {validation.website_url && (
-                <p className="text-sm text-red-600 mt-1">{validation.website_url}</p>
+                <p className="text-sm text-destructive mt-1">{validation.website_url}</p>
               )}
               <p className="text-sm text-muted-foreground mt-1">
                 Enter with or without https:// - we'll normalize it automatically
@@ -302,10 +302,10 @@ export const ResearchInitiator: React.FC<ResearchInitiatorProps> = ({
                 value={formData.linkedin_url}
                 onChange={(e) => updateField('linkedin_url', e.target.value)}
                 placeholder="linkedin.com/company/company-name (optional)"
-                className={validation.linkedin_url ? 'border-red-500' : ''}
+                className={validation.linkedin_url ? 'border-destructive' : ''}
               />
               {validation.linkedin_url && (
-                <p className="text-sm text-red-600 mt-1">{validation.linkedin_url}</p>
+                <p className="text-sm text-destructive mt-1">{validation.linkedin_url}</p>
               )}
             </div>
 
@@ -363,9 +363,9 @@ export const ResearchInitiator: React.FC<ResearchInitiatorProps> = ({
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-medium text-blue-800 mb-2">Research will include:</h4>
-            <ul className="list-disc list-inside space-y-1 text-blue-700 text-sm">
+          <div className="bg-scout-light-blue/10 border border-scout-light-blue/20 rounded-lg p-4">
+            <h4 className="font-medium text-scout-light-blue mb-2">Research will include:</h4>
+            <ul className="list-disc list-inside space-y-1 text-scout-light-blue/80 text-sm">
               <li>Strategic fit analysis with your company profile</li>
               <li>Decision maker identification and contact strategy</li>
               <li>Personalized outreach recommendations</li>
@@ -386,7 +386,7 @@ export const ResearchInitiator: React.FC<ResearchInitiatorProps> = ({
             >
               {isSubmitting ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
                   Submitting...
                 </>
               ) : (

@@ -30,7 +30,6 @@ export const PromptEvaluator: React.FC = () => {
     setIsEvaluating(true);
     
     try {
-      // Send request to selected webhook
       const response = await fetch(request.webhookUrl, {
         method: 'POST',
         headers: {
@@ -50,13 +49,11 @@ export const PromptEvaluator: React.FC = () => {
       let responseData;
       let errorMessage;
 
-      // Clone response to allow reading both JSON and text if needed
       const responseClone = response.clone();
 
       try {
         responseData = await response.json();
         
-        // Check for specific n8n webhook errors
         if (!response.ok) {
           if (response.status === 404 && responseData?.message?.includes('not registered for POST')) {
             errorMessage = 'Webhook not configured for POST requests. Please check your n8n workflow setup.';
@@ -67,13 +64,11 @@ export const PromptEvaluator: React.FC = () => {
           }
         }
       } catch {
-        // Use cloned response for text fallback
         responseData = await responseClone.text();
         if (!response.ok) {
           errorMessage = `HTTP ${response.status}: ${response.statusText}`;
         }
       }
-
 
       const result: EvaluationResult = {
         id: Date.now().toString(),
@@ -94,7 +89,6 @@ export const PromptEvaluator: React.FC = () => {
         errorMessage = error.message;
       }
 
-
       const result: EvaluationResult = {
         id: Date.now().toString(),
         request,
@@ -111,11 +105,11 @@ export const PromptEvaluator: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Simple Header */}
-      <div className="border-b border-gray-200 bg-white">
+      <div className="border-b border-border bg-background">
         <div className="container mx-auto px-6 py-4">
-          <h1 className="text-2xl font-semibold text-gray-900">
+          <h1 className="text-2xl font-semibold text-foreground">
             Prompt Refine Station
           </h1>
         </div>
@@ -126,13 +120,13 @@ export const PromptEvaluator: React.FC = () => {
         <div className="grid grid-cols-2 gap-8 h-full">
           {/* Left Column - Prompts */}
           <div className="space-y-4">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Prompt Configuration</h2>
+            <h2 className="text-lg font-medium text-foreground mb-4">Prompt Configuration</h2>
             <EvaluationForm onSubmit={handleEvaluation} isLoading={isEvaluating} />
           </div>
 
           {/* Right Column - Results */}
           <div className="space-y-4 flex flex-col min-h-0">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Results</h2>
+            <h2 className="text-lg font-medium text-foreground mb-4">Results</h2>
             <div className="flex-1 min-h-0">
               <SimpleResultsDisplay result={latestResult} isEvaluating={isEvaluating} />
             </div>

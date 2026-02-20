@@ -178,11 +178,11 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Badge variant="default" className="bg-green-100 text-green-800"><CheckCircle2 className="h-3 w-3 mr-1" />Completed</Badge>;
+        return <Badge variant="default" className="bg-accent text-accent-foreground"><CheckCircle2 className="h-3 w-3 mr-1" />Completed</Badge>;
       case 'pending':
         return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
       case 'in_progress':
-        return <Badge variant="default" className="bg-blue-100 text-blue-800"><Clock className="h-3 w-3 mr-1" />In Progress</Badge>;
+        return <Badge variant="default" className="bg-scout-light-blue/20 text-scout-light-blue"><Clock className="h-3 w-3 mr-1" />In Progress</Badge>;
       case 'failed':
         return <Badge variant="destructive"><AlertCircle className="h-3 w-3 mr-1" />Failed</Badge>;
       default:
@@ -192,9 +192,9 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
 
   const getFitScoreColor = (score?: number | null) => {
     if (!score) return 'text-muted-foreground';
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return 'text-accent-foreground';
+    if (score >= 60) return 'text-scout-orange';
+    return 'text-destructive';
   };
 
   const handleToggleStar = async (researchId: string, currentStarred: boolean) => {
@@ -257,10 +257,10 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 hover:bg-yellow-100"
+                className="h-6 w-6 p-0 hover:bg-accent"
                 onClick={() => handleToggleStar(item.id, item.is_starred || false)}
               >
-                <Star className={`h-4 w-4 ${item.is_starred ? 'text-yellow-500 fill-current' : 'text-muted-foreground'}`} />
+                <Star className={`h-4 w-4 ${item.is_starred ? 'text-scout-orange fill-current' : 'text-muted-foreground'}`} />
               </Button>
               {getStatusBadge(item.status)}
             </div>
@@ -295,7 +295,7 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
             </div>
             
             {item.error_message && (
-              <div className="mt-2 text-sm text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-2 rounded border border-amber-200 dark:border-amber-800">
+              <div className="mt-2 text-sm text-scout-orange bg-scout-orange/10 p-2 rounded border border-scout-orange/20">
                 <AlertCircle className="h-4 w-4 inline mr-1" />
                 {item.error_message}
               </div>
@@ -367,9 +367,9 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
       {(!companyProfile?.is_complete || !userProfile?.is_complete) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {!companyProfile?.is_complete && (
-            <Card className="border-orange-500/20 bg-orange-500/10 dark:border-orange-400/30 dark:bg-orange-400/10">
+            <Card className="border-scout-orange/20 bg-scout-orange/10 dark:border-scout-orange/30 dark:bg-scout-orange/10">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-orange-700 dark:text-orange-300">
+                <CardTitle className="flex items-center gap-2 text-scout-orange">
                   <Building2 className="h-5 w-5" />
                   Company Profile Setup
                 </CardTitle>
@@ -384,9 +384,9 @@ export const ResearchDashboard: React.FC<ResearchDashboardProps> = ({
           )}
 
           {!userProfile?.is_complete && (
-            <Card className="border-blue-500/20 bg-blue-500/10 dark:border-blue-400/30 dark:bg-blue-400/10">
+            <Card className="border-scout-light-blue/20 bg-scout-light-blue/10 dark:border-scout-light-blue/30 dark:bg-scout-light-blue/10">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                <CardTitle className="flex items-center gap-2 text-scout-light-blue">
                   <Target className="h-5 w-5" />
                   User Profile Setup
                 </CardTitle>

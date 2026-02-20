@@ -33,7 +33,6 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate required fields
     if (!formData.companyName || !formData.userPrompt || !formData.masterPrompt || !formData.webhookUrl) {
       toast({
         title: "Validation Error",
@@ -55,15 +54,12 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Load saved prompts on component mount
   useEffect(() => {
     loadSavedPrompts();
   }, []);
 
   const loadSavedPrompts = async () => {
     try {
-      // Note: 'prompts' table doesn't exist in database schema
-      // This feature is disabled until the table is created
       console.log('Prompt saving feature disabled - prompts table not available');
       setSavedPrompts([]);
     } catch (error) {
@@ -91,8 +87,6 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
     }
 
     try {
-      // Note: 'prompts' table doesn't exist in database schema
-      // This feature is disabled until the table is created
       toast({
         title: "Feature Disabled",
         description: "Prompt saving is not available yet",
@@ -125,8 +119,8 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Prompt Management Section */}
-      <div className="border-b border-gray-200 pb-4 mb-4">
-        <h3 className="text-sm font-medium text-gray-900 mb-3">Prompt Management</h3>
+      <div className="border-b border-border pb-4 mb-4">
+        <h3 className="text-sm font-medium text-foreground mb-3">Prompt Management</h3>
         
         {/* Load Existing Prompt */}
         <div className="grid grid-cols-2 gap-3 mb-3">
@@ -142,7 +136,7 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
               <SelectTrigger className="h-8 text-xs">
                 <SelectValue placeholder="Select a saved prompt" />
               </SelectTrigger>
-              <SelectContent className="bg-white border-gray-200">
+              <SelectContent>
                 {savedPrompts.map((prompt) => (
                   <SelectItem key={prompt.id} value={prompt.id} className="text-xs">
                     {prompt.name} ({new Date(prompt.created_at).toLocaleDateString()})
@@ -179,7 +173,7 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
       {/* Company Information - Compact */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="companyName" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="companyName" className="text-sm font-medium text-foreground">
             Company Name *
           </Label>
           <Input
@@ -187,22 +181,21 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
             value={formData.companyName}
             onChange={(e) => handleInputChange('companyName', e.target.value)}
             placeholder="Enter company name"
-            className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
             required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="webhookUrl" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="webhookUrl" className="text-sm font-medium text-foreground">
             Environment *
           </Label>
           <Select 
             value={formData.webhookUrl} 
             onValueChange={(value) => handleInputChange('webhookUrl', value)}
           >
-            <SelectTrigger className="border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+            <SelectTrigger>
               <SelectValue placeholder="Select webhook environment" />
             </SelectTrigger>
-            <SelectContent className="bg-white border-gray-200">
+            <SelectContent>
               <SelectItem value="https://agent.froste.eu/webhook-test/ab729e8a-0da7-49ef-902e-d0fafb1e0e56">
                 Test Environment
               </SelectItem>
@@ -217,7 +210,7 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
       {/* Optional URLs - Compact */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="companyUrl" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="companyUrl" className="text-sm font-medium text-foreground">
             Company URL
           </Label>
           <Input
@@ -225,11 +218,10 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
             value={formData.companyUrl}
             onChange={(e) => handleInputChange('companyUrl', e.target.value)}
             placeholder="https://company.com"
-            className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="linkedinUrl" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="linkedinUrl" className="text-sm font-medium text-foreground">
             LinkedIn URL
           </Label>
           <Input
@@ -237,7 +229,6 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
             value={formData.linkedinUrl}
             onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
             placeholder="https://linkedin.com/company/..."
-            className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -246,27 +237,27 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
       {/* Large Prompt Textareas */}
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="userPrompt" className="text-sm font-medium text-gray-700">User Prompt * - Prompt with dynamic fields (who to research, from whos perspective?</Label>
+          <Label htmlFor="userPrompt" className="text-sm font-medium text-foreground">User Prompt * - Prompt with dynamic fields (who to research, from whos perspective?</Label>
           <Textarea
             id="userPrompt"
             value={formData.userPrompt}
             onChange={(e) => handleInputChange('userPrompt', e.target.value)}
             placeholder="Enter the user prompt to evaluate..."
             rows={10}
-            className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 resize-none font-mono text-sm"
+            className="resize-none font-mono text-sm"
             required
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="masterPrompt" className="text-sm font-medium text-gray-700">Master Prompt * - More static prompt (generic research blueprint)</Label>
+          <Label htmlFor="masterPrompt" className="text-sm font-medium text-foreground">Master Prompt * - More static prompt (generic research blueprint)</Label>
           <Textarea
             id="masterPrompt"
             value={formData.masterPrompt}
             onChange={(e) => handleInputChange('masterPrompt', e.target.value)}
             placeholder="Enter the master prompt for evaluation..."
             rows={10}
-            className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 resize-none font-mono text-sm"
+            className="resize-none font-mono text-sm"
             required
           />
         </div>
@@ -277,7 +268,7 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({ onSubmit, isLoad
         variant="default" 
         size="lg" 
         disabled={isLoading}
-        className="w-full font-semibold bg-blue-600 hover:bg-blue-700 text-white"
+        className="w-full font-semibold"
       >
         {isLoading ? (
           <>
