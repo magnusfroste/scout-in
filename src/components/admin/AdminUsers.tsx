@@ -4,8 +4,9 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Users, Coins, Search, Plus, Minus } from 'lucide-react';
+import { Loader2, Users, Coins, Search, Plus, Minus, ShieldCheck, ShieldOff } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface UserRow {
   user_id: string;
@@ -21,11 +22,13 @@ interface UserRow {
 
 export function AdminUsers() {
   const { toast } = useToast();
+  const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [creditAmounts, setCreditAmounts] = useState<Record<string, string>>({});
   const [updating, setUpdating] = useState<string | null>(null);
+  const [togglingRole, setTogglingRole] = useState<string | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -115,6 +118,43 @@ export function AdminUsers() {
     setUpdating(null);
   };
 
+  const toggleAdmin = async (userId: string, currentRole: string | null) => {
+    if (userId === currentUser?.id) {
+      toast({ title: 'Error', description: 'Du kan inte ändra din egen roll', variant: 'destructive' });
+      return;
+    }
+    setTogglingRole(userId);
+
+    if (currentRole === 'admin') {
+      // Remove admin role
+      const { error } = await supabase
+        .from('user_roles')
+        .delete()
+        .eq('user_id', userId)
+        .eq('role', 'admin');
+
+      if (error) {
+        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      } else {
+        toast({ title: 'Admin-roll borttagen' });
+        fetchUsers();
+      }
+    } else {
+      // Add admin role
+      const { error } = await supabase
+        .from('user_roles')
+        .insert({ user_id: userId, role: 'admin' });
+
+      if (error) {
+        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      } else {
+        toast({ title: 'Admin-roll tilldelad' });
+        fetchUsers();
+      }
+    }
+    setTogglingRole(null);
+  };
+
   const filtered = users.filter((u) => {
     if (!search) return true;
     const q = search.toLowerCase();
@@ -164,6 +204,22 @@ export function AdminUsers() {
                   {user.role && (
                     <Badge variant="outline" className="text-[10px]">{user.role}</Badge>
                   )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6"
+                    disabled={togglingRole === user.user_id || user.user_id === currentUser?.id}
+                    onClick={() => toggleAdmin(user.user_id, user.role)}
+                    title={user.role === 'admin' ? 'Ta bort admin' : 'Gör till admin'}
+                  >
+                    {togglingRole === user.user_id ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : user.role === 'admin' ? (
+                      <ShieldOff className="h-3.5 w-3.5 text-destructive" />
+                    ) : (
+                      <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
+                    )}
+                  </Button>
                   {user.profile_complete && (
                     <Badge className="text-[10px] bg-primary/10 text-primary border-0">Profile ✓</Badge>
                   )}
