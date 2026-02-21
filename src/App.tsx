@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,13 +10,14 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
-import Index from "./pages/Index";
-import CompanyProfilePage from "./pages/CompanyProfilePage";
-import UserProfilePage from "./pages/UserProfilePage";
-import ResearchPage from "./pages/ResearchPage";
-import SettingsPage from "./pages/SettingsPage";
-import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
+
+const Index = lazy(() => import("./pages/Index"));
+const CompanyProfilePage = lazy(() => import("./pages/CompanyProfilePage"));
+const UserProfilePage = lazy(() => import("./pages/UserProfilePage"));
+const ResearchPage = lazy(() => import("./pages/ResearchPage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
 
 const queryClient = new QueryClient();
 
@@ -33,13 +35,13 @@ const App = () => (
               
               <Route element={<ProtectedRoute />}>
                 <Route element={<AppLayout />}>
-                  <Route path="/dashboard" element={<Index />} />
-                  <Route path="/company-profile" element={<CompanyProfilePage />} />
-                  <Route path="/user-profile" element={<UserProfilePage />} />
-                  <Route path="/research" element={<ResearchPage />} />
-                  <Route path="/settings" element={<SettingsPage />} />
-                  <Route path="/admin" element={<AdminPage />} />
-                  <Route path="/history" element={<Index />} />
+                  <Route path="/dashboard" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}><Index /></Suspense>} />
+                  <Route path="/company-profile" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}><CompanyProfilePage /></Suspense>} />
+                  <Route path="/user-profile" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}><UserProfilePage /></Suspense>} />
+                  <Route path="/research" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}><ResearchPage /></Suspense>} />
+                  <Route path="/settings" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}><SettingsPage /></Suspense>} />
+                  <Route path="/admin" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}><AdminPage /></Suspense>} />
+                  <Route path="/history" element={<Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}><Index /></Suspense>} />
                 </Route>
               </Route>
 
