@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Json } from '@/integrations/supabase/types';
+import type { Json, TablesUpdate } from '@/integrations/supabase/types';
 import type { ProspectResearch, ResearchFormData, ResearchResults } from '@/types/research';
 import type { CompanyProfile, UserProfile } from '@/types/profiles';
 
@@ -61,7 +61,7 @@ export async function updateResearchStatus(
   status: string,
   errorMessage?: string
 ): Promise<void> {
-  const update: Record<string, unknown> = { status };
+  const update: TablesUpdate<'lab_prospect_research'> = { status };
   
   if (status === 'completed') {
     update.completed_at = new Date().toISOString();
