@@ -1,0 +1,10 @@
+# Scout-In
+
+> AI-powered prospect research for sales teams: company analysis, decision-maker insights and personalized outreach strategies in minutes.
+
+Scout-In automates the tedious part of B2B prospect research. Based on your own company profile, it analyzes a prospect's company data and market position, identifies decision-makers and suggests tailored value propositions and contact strategies. It is built for sales professionals, founders and consultants who want comprehensive research reports in minutes instead of hours.
+
+## Links
+
+- [Home](https://scoutin.liteit.se/)
+- [Sign in / get started](https://scoutin.liteit.se/auth)
