@@ -1,86 +1,25 @@
-# Scout-in 🔬
+# Scout-In — AI prospect research
 
-Research project exploring AI and machine learning concepts. Experimental codebase for testing new ideas and technologies.
+> **Now part of [Flowwink](https://www.flowwink.com).** Scout-In was the prototype that proved the concept; it lives on as the **Sales Intelligence** module in Flowwink, the open-source Business Operating System — operable by any agent. New work happens there: [github.com/magnusfroste/flowwink](https://github.com/magnusfroste/flowwink).
 
-## Features
+Scout-In tested whether AI can do the homework before a sales conversation — in minutes instead of hours:
 
-- **AI Experiments**: Test various AI models and approaches
-- **Machine Learning**: Explore ML algorithms and techniques
-- **Research Tools**: Utilities for data analysis and visualization
-- **Responsive Design**: Works on desktop and mobile
+- **Company analysis** — what the prospect does, where it is heading, and where it hurts
+- **Decision-maker insights** — who to talk to, and what they care about
+- **Outreach strategy** — a personalized angle grounded in the research
 
-## Getting Started
+What worked became the Sales Intelligence module in Flowwink, where research feeds directly into the CRM and the agents that act on it.
 
-### Prerequisites
+## Run the prototype
 
-- Node.js (v18 or higher)
-- npm or yarn
-- Supabase account (for self-hosting)
-
-### Installation
+React · TypeScript · Vite · Supabase
 
 ```bash
 npm install
-```
-
-### Run Locally
-
-```bash
-# Set your Supabase credentials in .env.local
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-
+# .env.local: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY for your Supabase project
+npx supabase db push   # apply the migrations
 npm run dev
 ```
-
-### Self-Hosted Setup
-
-If you want to self-host this application, you'll need:
-
-1. **Create a Supabase Project**
-   - Go to [supabase.com](https://supabase.com)
-   - Create a new project
-   - Get your project URL and anon key
-
-2. **Set Environment Variables**
-   ```bash
-   VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
-
-3. **Run Database Migrations**
-   ```bash
-   # Navigate to your project directory
-   cd /path/to/lazyjames-research
-
-   # Run all migrations
-   npx supabase db push
-   ```
-
-   Or manually run migrations:
-   ```bash
-   npx supabase db reset
-   ```
-
-4. **Run the Application**
-   ```bash
-   npm run dev
-   ```
-
-### Build for Production
-
-```bash
-npm run build
-```
-
-## Tech Stack
-
-- **React** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **Supabase** - Backend & Auth
-- **shadcn/ui** - Components
-- **Tailwind CSS** - Styling
 
 ## License
 
